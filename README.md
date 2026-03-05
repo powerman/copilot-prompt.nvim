@@ -15,18 +15,49 @@ or any other Neovim AI chat plugin.
 
 The prompt generation logic was ported from
 [microsoft/vscode-copilot-chat](https://github.com/microsoft/vscode-copilot-chat)
-version v0.38.2026022702.
+version **v0.38.2026022702**.<br/>
 See [LICENSE.copilot](LICENSE.copilot) (MIT) for the original copyright notice.
 
-## Requirements
+## Features
 
-- Neovim 0.10+
+- Full-featured VS Code Copilot prompt.
+- Adapted for Neovim.
+- Configurable LLM identity.
+- Your tool names included in the prompt with generic instructions per tool type.
+- Optional structured-workflow prompt for `gpt-*` models.
+- Optional code search mode: omits Agent-mode instructions (file editing, command execution).
+- Option to omit base identity, safety, and main prompt sections.
+- Option to add LaTeX math formatting instructions.
+
+### Model-specific prompts
+
+The plugin automatically selects the best prompt variant for the given model:
+
+| Model pattern                              | Prompt variant        |
+| ------------------------------------------ | --------------------- |
+| `claude-sonnet-4`, `claude-sonnet-4-*`     | Anthropic (legacy)    |
+| `claude-*4.5*`, `claude-*4-5*`             | Anthropic Claude 4.5  |
+| other `claude-*`                           | Anthropic Claude 4.6+ |
+| `gemini-*`                                 | Gemini                |
+| `gpt-5.3-codex*`                           | GPT-5.3 Codex         |
+| `gpt-5.1-codex*`, `gpt-5.2-codex*`         | GPT-5.1 Codex         |
+| `gpt-5-codex*`                             | GPT-5 Codex           |
+| `gpt-5.2*`                                 | GPT-5.2               |
+| `gpt-5.1*`                                 | GPT-5.1               |
+| `gpt-5*`                                   | GPT-5                 |
+| `gpt-4*`, `o3-mini*`, `o4-mini`, `OpenAI*` | Default OpenAI        |
+| `grok-*`                                   | xAI                   |
+| `glm-*`                                    | ZAI                   |
+| anything else                              | Generic fallback      |
 
 ## Installation
 
+Install the plugin with your preferred package manager:
+
+### [lazy.nvim](https://github.com/folke/lazy.nvim)
+
 ```lua
--- lazy.nvim
-{ 'powerman/copilot-prompt.nvim' }
+return { 'powerman/copilot-prompt.nvim' }
 ```
 
 ## Usage
@@ -79,7 +110,7 @@ local copilot_prompt = require('copilot_prompt').system_prompt {
 ### Options
 
 ```lua
-copilot_prompt.system_prompt {
+require('copilot_prompt').system_prompt {
     -- Name the AI identifies itself as.
     identity = 'GitHub Copilot',
 
@@ -131,28 +162,9 @@ copilot_prompt.system_prompt {
 }
 ```
 
-### Model-specific prompts
+## Examples
 
-The plugin automatically selects the best prompt variant for the given model:
-
-| Model pattern                              | Prompt variant        |
-| ------------------------------------------ | --------------------- |
-| `claude-sonnet-4`, `claude-sonnet-4-*`     | Anthropic (legacy)    |
-| `claude-*4.5*`, `claude-*4-5*`             | Anthropic Claude 4.5  |
-| other `claude-*`                           | Anthropic Claude 4.6+ |
-| `gemini-*`                                 | Gemini                |
-| `gpt-5.3-codex*`                           | GPT-5.3 Codex         |
-| `gpt-5.1-codex*`, `gpt-5.2-codex*`         | GPT-5.1 Codex         |
-| `gpt-5-codex*`                             | GPT-5 Codex           |
-| `gpt-5.2*`                                 | GPT-5.2               |
-| `gpt-5.1*`                                 | GPT-5.1               |
-| `gpt-5*`                                   | GPT-5                 |
-| `gpt-4*`, `o3-mini*`, `o4-mini`, `OpenAI*` | Default OpenAI        |
-| `grok-*`                                   | xAI                   |
-| `glm-*`                                    | ZAI                   |
-| anything else                              | Generic fallback      |
-
-## Integration with CodeCompanion
+### Integration with CodeCompanion
 
 Below is a full example that wires `copilot-prompt.nvim` into CodeCompanion + MCPHub.
 

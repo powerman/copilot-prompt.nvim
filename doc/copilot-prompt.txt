@@ -4,12 +4,14 @@
 Table of Contents                           *copilot-prompt-table-of-contents*
 
 1. About                                                |copilot-prompt-about|
-2. Requirements                                  |copilot-prompt-requirements|
+2. Features                                          |copilot-prompt-features|
+  - Model-specific prompts    |copilot-prompt-features-model-specific-prompts|
 3. Installation                                  |copilot-prompt-installation|
+  - lazy.nvim                          |copilot-prompt-installation-lazy.nvim|
 4. Usage                                                |copilot-prompt-usage|
   - Options                                     |copilot-prompt-usage-options|
-  - Model-specific prompts       |copilot-prompt-usage-model-specific-prompts|
-5. Integration with CodeCompanion|copilot-prompt-integration-with-codecompanion|
+5. Examples                                          |copilot-prompt-examples|
+  - Integration with CodeCompanion|copilot-prompt-examples-integration-with-codecompanion|
 6. Links                                                |copilot-prompt-links|
 <LICENSE> <https://neovim.io/> <https://www.lua.org/>
 <https://github.com/powerman/copilot-prompt.nvim/actions/workflows/test.yml>
@@ -25,22 +27,55 @@ official VS Code Copilot prompt, for use with CodeCompanion
 plugin.
 
 The prompt generation logic was ported from microsoft/vscode-copilot-chat
-<https://github.com/microsoft/vscode-copilot-chat> version v0.38.2026022702.
-See LICENSE.copilot <LICENSE.copilot> (MIT) for the original copyright notice.
+<https://github.com/microsoft/vscode-copilot-chat> version
+**v0.38.2026022702**. See LICENSE.copilot <LICENSE.copilot> (MIT) for the
+original copyright notice.
 
 
 ==============================================================================
-2. Requirements                                  *copilot-prompt-requirements*
+2. Features                                          *copilot-prompt-features*
 
-- Neovim 0.10+
+- Full-featured VS Code Copilot prompt.
+- Adapted for Neovim.
+- Configurable LLM identity.
+- Your tool names included in the prompt with generic instructions per tool type.
+- Optional structured-workflow prompt for `gpt-*` models.
+- Optional code search mode: omits Agent-mode instructions (file editing, command execution).
+- Option to omit base identity, safety, and main prompt sections.
+- Option to add LaTeX math formatting instructions.
 
+
+MODEL-SPECIFIC PROMPTS        *copilot-prompt-features-model-specific-prompts*
+
+The plugin automatically selects the best prompt variant for the given model:
+
+  Model pattern                        Prompt variant
+  ------------------------------------ -----------------------
+  claude-sonnet-4, claude-sonnet-4-*   Anthropic (legacy)
+  claude-*4.5*, claude-*4-5*           Anthropic Claude 4.5
+  other claude-*                       Anthropic Claude 4.6+
+  gemini-*                             Gemini
+  gpt-5.3-codex*                       GPT-5.3 Codex
+  gpt-5.1-codex*, gpt-5.2-codex*       GPT-5.1 Codex
+  gpt-5-codex*                         GPT-5 Codex
+  gpt-5.2*                             GPT-5.2
+  gpt-5.1*                             GPT-5.1
+  gpt-5*                               GPT-5
+  gpt-4*, o3-mini*, o4-mini, OpenAI*   Default OpenAI
+  grok-*                               xAI
+  glm-*                                ZAI
+  anything else                        Generic fallback
 
 ==============================================================================
 3. Installation                                  *copilot-prompt-installation*
 
+Install the plugin with your preferred package manager:
+
+
+LAZY.NVIM                              *copilot-prompt-installation-lazy.nvim*
+
 >lua
-    -- lazy.nvim
-    { 'powerman/copilot-prompt.nvim' }
+    return { 'powerman/copilot-prompt.nvim' }
 <
 
 
@@ -99,7 +134,7 @@ instead:
 OPTIONS                                         *copilot-prompt-usage-options*
 
 >lua
-    copilot_prompt.system_prompt {
+    require('copilot_prompt').system_prompt {
         -- Name the AI identifies itself as.
         identity = 'GitHub Copilot',
     
@@ -152,29 +187,11 @@ OPTIONS                                         *copilot-prompt-usage-options*
 <
 
 
-MODEL-SPECIFIC PROMPTS           *copilot-prompt-usage-model-specific-prompts*
-
-The plugin automatically selects the best prompt variant for the given model:
-
-  Model pattern                        Prompt variant
-  ------------------------------------ -----------------------
-  claude-sonnet-4, claude-sonnet-4-*   Anthropic (legacy)
-  claude-*4.5*, claude-*4-5*           Anthropic Claude 4.5
-  other claude-*                       Anthropic Claude 4.6+
-  gemini-*                             Gemini
-  gpt-5.3-codex*                       GPT-5.3 Codex
-  gpt-5.1-codex*, gpt-5.2-codex*       GPT-5.1 Codex
-  gpt-5-codex*                         GPT-5 Codex
-  gpt-5.2*                             GPT-5.2
-  gpt-5.1*                             GPT-5.1
-  gpt-5*                               GPT-5
-  gpt-4*, o3-mini*, o4-mini, OpenAI*   Default OpenAI
-  grok-*                               xAI
-  glm-*                                ZAI
-  anything else                        Generic fallback
-
 ==============================================================================
-5. Integration with CodeCompanion*copilot-prompt-integration-with-codecompanion*
+5. Examples                                          *copilot-prompt-examples*
+
+
+INTEGRATION WITH CODECOMPANION*copilot-prompt-examples-integration-with-codecompanion*
 
 Below is a full example that wires `copilot-prompt.nvim` into CodeCompanion +
 MCPHub.
