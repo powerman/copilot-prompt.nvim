@@ -97,6 +97,10 @@ one changed idea = one changed line.
 - Update existing documentation together with code changes
   ONLY if otherwise existing documentation became incorrect.
 - Keep lines within 96 characters.
+- Keep Markdown tables within 120 characters per row.
+  If a table would exceed this limit, use a Lua code block with inline comments
+  to document Lua types (showing field types, defaults, and descriptions together),
+  or use custom markup for non-Lua types instead of a wide table.
 
 #### Commenting
 
