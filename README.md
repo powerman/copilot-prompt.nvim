@@ -1,5 +1,13 @@
 # copilot-prompt.nvim
 
+[![License MIT](https://img.shields.io/badge/license-MIT-royalblue.svg)](LICENSE)
+[![Neovim 0.10+](https://img.shields.io/badge/Neovim-0.10%2B-royalblue?logo=neovim&logoColor=white)](https://neovim.io/)
+[![Lua 5.1](https://img.shields.io/badge/Lua-5.1-blue)](https://www.lua.org/)
+[![Test](https://img.shields.io/github/actions/workflow/status/powerman/copilot-prompt.nvim/test.yml?label=test)](https://github.com/powerman/copilot-prompt.nvim/actions/workflows/test.yml)
+[![Release](https://img.shields.io/github/v/release/powerman/copilot-prompt.nvim?color=blue)](https://github.com/powerman/copilot-prompt.nvim/releases/latest)
+
+## About
+
 Neovim plugin that generates a system prompt (adapted for Neovim)
 close to the official VS Code Copilot prompt,
 for use with [CodeCompanion](https://github.com/olimorris/codecompanion.nvim)
