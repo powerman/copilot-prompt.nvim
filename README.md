@@ -348,7 +348,7 @@ return {
                 chat = {
                     adapter = {
                         name = 'copilot',
-                        model = 'gpt-4.1', -- Multiplier = 0 (free).
+                        model = 'gpt-4.1',
                     },
                     opts = {
                         -- Evaluated once when the chat is created (or when the adapter changes).
