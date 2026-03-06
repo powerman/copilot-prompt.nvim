@@ -3,8 +3,8 @@
 
 local M = {}
 
-local dai = require 'copilot_prompt.default_agent_instructions'
-local fileLinkification = require 'copilot_prompt.file_linkification_instructions'
+local dai = require 'copilot_prompt.agent.default_agent_instructions'
+local fileLinkification = require 'copilot_prompt.agent.file_linkification_instructions'
 local responseTranslation = require 'copilot_prompt.base.response_translation_rules'
 
 local tn = dai.tn

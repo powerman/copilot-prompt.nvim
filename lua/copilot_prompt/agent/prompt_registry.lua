@@ -5,7 +5,7 @@ local M = {}
 
 local capabilities = require 'copilot_prompt.common.chat_model_capabilities'
 local copilot_identity = require 'copilot_prompt.base.copilot_identity'
-local dai = require 'copilot_prompt.default_agent_instructions'
+local dai = require 'copilot_prompt.agent.default_agent_instructions'
 local safety_rules = require 'copilot_prompt.base.safety_rules'
 
 --- Resolve which prompt renderer and reminder instructions to use,
@@ -25,7 +25,7 @@ function M.resolveCustomizations(opts)
     -- Check model family in priority order matching PromptRegistry resolution.
     -- Codex models are checked first because they overlap with gpt-5* families.
     if capabilities.isGpt53Codex(opts.model) then
-        local gpt53_codex = require 'copilot_prompt.openai.gpt53_codex_prompt'
+        local gpt53_codex = require 'copilot_prompt.agent.openai.gpt53_codex_prompt'
         systemPromptRenderer, reminderRenderer = gpt53_codex.resolve(opts)
         identityRenderer = copilot_identity.GPT5CopilotIdentityRule_render
         safetyRenderer = safety_rules.Gpt5SafetyRule_render
@@ -33,42 +33,42 @@ function M.resolveCustomizations(opts)
         capabilities.isGpt52CodexFamily(opts.model)
         or capabilities.isGpt51CodexFamily(opts.model)
     then
-        local gpt51_codex = require 'copilot_prompt.openai.gpt51_codex_prompt'
+        local gpt51_codex = require 'copilot_prompt.agent.openai.gpt51_codex_prompt'
         systemPromptRenderer, reminderRenderer = gpt51_codex.resolve(opts)
         identityRenderer = copilot_identity.GPT5CopilotIdentityRule_render
         safetyRenderer = safety_rules.Gpt5SafetyRule_render
     elseif capabilities.isGpt5CodexFamily(opts.model) then
-        local gpt5_codex = require 'copilot_prompt.openai.gpt5_codex_prompt'
+        local gpt5_codex = require 'copilot_prompt.agent.openai.gpt5_codex_prompt'
         systemPromptRenderer, reminderRenderer = gpt5_codex.resolve(opts)
         -- gpt-5-codex does not override identity/safety in the original.
     elseif capabilities.isXAIFamily(opts.model) then
-        local xai = require 'copilot_prompt.xai_prompts'
+        local xai = require 'copilot_prompt.agent.xai_prompts'
         systemPromptRenderer, reminderRenderer = xai.resolve(opts)
     elseif capabilities.isZAIFamily(opts.model) then
-        local zai = require 'copilot_prompt.zai_prompts'
+        local zai = require 'copilot_prompt.agent.zai_prompts'
         systemPromptRenderer, reminderRenderer = zai.resolve(opts)
     elseif capabilities.isAnthropicFamily(opts.model) then
-        local anthropic = require 'copilot_prompt.anthropic_prompts'
+        local anthropic = require 'copilot_prompt.agent.anthropic_prompts'
         systemPromptRenderer, reminderRenderer = anthropic.resolve(opts)
     elseif capabilities.isGeminiFamily(opts.model) then
-        local gemini = require 'copilot_prompt.gemini_prompts'
+        local gemini = require 'copilot_prompt.agent.gemini_prompts'
         systemPromptRenderer, reminderRenderer = gemini.resolve(opts)
     elseif capabilities.isGpt52Family(opts.model) then
-        local gpt52 = require 'copilot_prompt.openai.gpt52_prompt'
+        local gpt52 = require 'copilot_prompt.agent.openai.gpt52_prompt'
         systemPromptRenderer, reminderRenderer = gpt52.resolve(opts)
         identityRenderer = copilot_identity.GPT5CopilotIdentityRule_render
         safetyRenderer = safety_rules.Gpt5SafetyRule_render
     elseif
         capabilities.isGpt51Family(opts.model) and not capabilities.isGptCodexFamily(opts.model)
     then
-        local gpt51 = require 'copilot_prompt.openai.gpt51_prompt'
+        local gpt51 = require 'copilot_prompt.agent.openai.gpt51_prompt'
         systemPromptRenderer, reminderRenderer = gpt51.resolve(opts)
         identityRenderer = copilot_identity.GPT5CopilotIdentityRule_render
         safetyRenderer = safety_rules.Gpt5SafetyRule_render
     elseif
         capabilities.isGpt5Family(opts.model) and not capabilities.isGptCodexFamily(opts.model)
     then
-        local gpt5 = require 'copilot_prompt.openai.gpt5_prompt'
+        local gpt5 = require 'copilot_prompt.agent.openai.gpt5_prompt'
         systemPromptRenderer, reminderRenderer = gpt5.resolve(opts)
         identityRenderer = copilot_identity.GPT5CopilotIdentityRule_render
         safetyRenderer = safety_rules.Gpt5SafetyRule_render
@@ -78,7 +78,7 @@ function M.resolveCustomizations(opts)
         or opts.model:find '^o3%-mini' ~= nil
         or opts.model:find '^OpenAI' ~= nil
     then
-        local openai = require 'copilot_prompt.openai.default_openai_prompt'
+        local openai = require 'copilot_prompt.agent.openai.default_openai_prompt'
         systemPromptRenderer, reminderRenderer = openai.resolve(opts)
     else
         -- Fallback: default prompt.

@@ -5,7 +5,7 @@ local M = {}
 
 local tag = require('copilot_prompt.base.tag').wrap
 local capabilities = require 'copilot_prompt.common.chat_model_capabilities'
-local fileLinkification = require 'copilot_prompt.file_linkification_instructions'
+local fileLinkification = require 'copilot_prompt.agent.file_linkification_instructions'
 local responseTranslation = require 'copilot_prompt.base.response_translation_rules'
 
 --- Detect which tool capabilities are available from opts.tools.

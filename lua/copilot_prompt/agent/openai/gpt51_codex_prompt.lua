@@ -4,8 +4,8 @@
 local M = {}
 
 local tag = require('copilot_prompt.base.tag').wrap
-local dai = require 'copilot_prompt.default_agent_instructions'
-local fileLinkification = require 'copilot_prompt.file_linkification_instructions'
+local dai = require 'copilot_prompt.agent.default_agent_instructions'
+local fileLinkification = require 'copilot_prompt.agent.file_linkification_instructions'
 
 local tn = dai.tn
 

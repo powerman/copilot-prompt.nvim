@@ -3,16 +3,16 @@
 --- for use with CodeCompanion in Neovim.
 ---
 --- Prompt generation logic was extracted from
---- https://github.com/microsoft/vscode-copilot-chat at v0.38.2026022702
+--- https://github.com/microsoft/vscode-copilot-chat
 --- and adapted for Neovim and CodeCompanion.
 --- Source license: MIT License. Copyright (c) Microsoft Corporation. All rights reserved.
 --- File structure and identifiers are kept close to the original for easier future updates.
 --- Directory relationships are:
----   copilot/          src/extension/prompts/node/agent/
----   copilot/openai/   src/extension/prompts/node/agent/openai/
----   copilot/base/     src/extension/prompts/node/base/
----   copilot/node/     src/extension/intents/node/
----   copilot/common/   src/platform/endpoint/common/
+---   copilot/agent/            src/extension/prompts/node/agent/
+---   copilot/agent/openai/     src/extension/prompts/node/agent/openai/
+---   copilot/base/             src/extension/prompts/node/base/
+---   copilot/node/             src/extension/intents/node/
+---   copilot/common/           src/platform/endpoint/common/
 ---
 --- Usage:
 ---   local copilot_prompt = require 'copilot_prompt'
@@ -23,7 +23,7 @@ require 'copilot_prompt.types'
 local M = {}
 
 local agent_intent = require 'copilot_prompt.node.agent_intent'
-local agent_prompt = require 'copilot_prompt.agent_prompt'
+local agent_prompt = require 'copilot_prompt.agent.agent_prompt'
 
 --- Normalize the final prompt text:
 --- collapse runs of 3+ newlines into 2 and trim trailing whitespace.

@@ -4,8 +4,8 @@
 local M = {}
 
 local tag = require('copilot_prompt.base.tag').wrap
-local dai = require 'copilot_prompt.default_agent_instructions'
-local fileLinkification = require 'copilot_prompt.file_linkification_instructions'
+local dai = require 'copilot_prompt.agent.default_agent_instructions'
+local fileLinkification = require 'copilot_prompt.agent.file_linkification_instructions'
 local responseTranslation = require 'copilot_prompt.base.response_translation_rules'
 
 local tn = dai.tn
@@ -196,7 +196,7 @@ end
 ---@param opts Copilot.Options
 ---@return string
 function M.Gpt5ReminderInstructions_render(opts)
-    local gpt51_prompts = require 'copilot_prompt.openai.gpt51_prompt'
+    local gpt51_prompts = require 'copilot_prompt.agent.openai.gpt51_prompt'
     local tools = dai.detectToolCapabilities(opts.tools)
     local lines = {}
     table.insert(lines, gpt51_prompts.Gpt51ReminderInstructions_render(opts))

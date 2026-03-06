@@ -4,7 +4,7 @@
 
 local M = {}
 
-local gpt51 = require 'copilot_prompt.openai.gpt51_prompt'
+local gpt51 = require 'copilot_prompt.agent.openai.gpt51_prompt'
 
 --- GPT-5.2 uses the same prompt as GPT-5.1.
 ---@param opts Copilot.Options

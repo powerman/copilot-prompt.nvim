@@ -1,21 +1,19 @@
---- GPT-5.3 Codex agent prompt.
---- Ported from openai/gpt53CodexPrompt.tsx.
+--- GPT-5.1 agent prompt.
+--- Ported from openai/gpt51Prompt.tsx.
 
 local M = {}
 
 local tag = require('copilot_prompt.base.tag').wrap
-local dai = require 'copilot_prompt.default_agent_instructions'
-local fileLinkification = require 'copilot_prompt.file_linkification_instructions'
+local dai = require 'copilot_prompt.agent.default_agent_instructions'
+local fileLinkification = require 'copilot_prompt.agent.file_linkification_instructions'
 local responseTranslation = require 'copilot_prompt.base.response_translation_rules'
 
 local tn = dai.tn
 
---- Gpt53CodexPrompt — for gpt-5.3-codex models.
---- Uses the same structure as gpt51 prompt but with additional sections
---- for autonomy, validation, ambition, and detailed formatting.
+--- Gpt51Prompt — GPT-5.1 system prompt.
 ---@param opts Copilot.Options
 ---@return string
-function M.Gpt53CodexPrompt_render(opts)
+function M.Gpt51Prompt_render(opts)
     local tools = dai.detectToolCapabilities(opts.tools)
     local parts = {}
 
@@ -24,7 +22,7 @@ function M.Gpt53CodexPrompt_render(opts)
         tag(
             'coding_agent_instructions',
             table.concat({
-                'You are a coding agent. You are expected to be precise, safe, and helpful.',
+                'You are a coding agent running in Neovim. You are expected to be precise, safe, and helpful.',
                 '',
                 'Your capabilities:',
                 '',
@@ -39,7 +37,9 @@ function M.Gpt53CodexPrompt_render(opts)
         parts,
         tag(
             'personality',
-            'Your default personality and tone is concise, direct, and friendly. You communicate efficiently, always keeping the user clearly informed about ongoing actions without unnecessary detail. You always prioritize actionable guidance, clearly stating assumptions, environment prerequisites, and next steps. Unless explicitly asked, you avoid excessively verbose explanations about your work.'
+            table.concat({
+                'Your default personality and tone is concise, direct, and friendly. You communicate efficiently, always keeping the user clearly informed about ongoing actions without unnecessary detail. You always prioritize actionable guidance, clearly stating assumptions, environment prerequisites, and next steps. Unless explicitly asked, you avoid excessively verbose explanations about your work.',
+            }, '\n')
         )
     )
 
@@ -55,7 +55,7 @@ function M.Gpt53CodexPrompt_render(opts)
         )
     )
 
-    -- Planning.
+    -- planning
     do
         local planLines = {}
         if tools.CoreManageTodoList then
@@ -86,7 +86,7 @@ function M.Gpt53CodexPrompt_render(opts)
         table.insert(parts, tag('planning', table.concat(planLines, '\n')))
     end
 
-    -- Task execution.
+    -- task_execution
     do
         local execLines = {}
         table.insert(
@@ -150,10 +150,6 @@ function M.Gpt53CodexPrompt_render(opts)
             execLines,
             '- Do not use one-letter variable names unless explicitly requested.'
         )
-        table.insert(
-            execLines,
-            '- You have access to many tools. If a tool exists to perform a specific task, you MUST use that tool instead of running a terminal command to perform that task.'
-        )
         if tools.CoreRunTest then
             table.insert(
                 execLines,
@@ -165,7 +161,7 @@ function M.Gpt53CodexPrompt_render(opts)
         table.insert(parts, tag('task_execution', table.concat(execLines, '\n')))
     end
 
-    -- Validating work.
+    -- validating_work
     table.insert(
         parts,
         tag(
@@ -180,41 +176,11 @@ function M.Gpt53CodexPrompt_render(opts)
         )
     )
 
-    -- Ambition vs precision.
-    table.insert(
-        parts,
-        tag(
-            'ambition_vs_precision',
-            table.concat({
-                'For tasks that have no prior context (i.e. the user is starting something brand new), you should feel free to be ambitious and demonstrate creativity with your implementation.',
-                '',
-                "If you're operating in an existing codebase, you should make sure you do exactly what the user asks with surgical precision. Treat the surrounding codebase with respect, and don't overstep (i.e. changing filenames or variables unnecessarily). You should balance being sufficiently ambitious and proactive when completing tasks of this nature.",
-                '',
-                "You should use judicious initiative to decide on the right level of detail and complexity to deliver based on the user's needs. This means showing good judgment that you're capable of doing the right extras without gold-plating.",
-            }, '\n')
-        )
-    )
-
     if tools.ApplyPatch then
         table.insert(parts, dai.ApplyPatchInstructions_render(opts, tools))
     end
 
-    -- Special formatting.
-    do
-        local fmtLines = {}
-        table.insert(
-            fmtLines,
-            "When referring to a filename or symbol in the user's workspace, wrap it in backticks."
-        )
-        table.insert(
-            fmtLines,
-            tag('example', 'The class `Person` is in `src/models/person.ts`.')
-        )
-        table.insert(fmtLines, dai.MathIntegrationRules_render(opts))
-        table.insert(parts, tag('special_formatting', table.concat(fmtLines, '\n')))
-    end
-
-    -- Final answer formatting.
+    -- final_answer_formatting with fileLinkification
     table.insert(
         parts,
         tag(
@@ -232,10 +198,10 @@ function M.Gpt53CodexPrompt_render(opts)
     return table.concat(parts, '\n')
 end
 
---- Gpt53CodexReminderInstructions.
+--- Gpt51ReminderInstructions.
 ---@param opts Copilot.Options
 ---@return string
-function M.Gpt53CodexReminderInstructions_render(opts)
+function M.Gpt51ReminderInstructions_render(opts)
     local tools = dai.detectToolCapabilities(opts.tools)
     local lines = {}
     table.insert(
@@ -279,12 +245,12 @@ function M.Gpt53CodexReminderInstructions_render(opts)
     return table.concat(lines, '\n')
 end
 
---- Resolve for GPT-5.3 Codex.
+--- Resolve for GPT-5.1.
 ---@param opts Copilot.Options
 ---@return fun(opts: Copilot.Options): string systemPrompt
 ---@return fun(opts: Copilot.Options): string reminderInstructions
 function M.resolve(_)
-    return M.Gpt53CodexPrompt_render, M.Gpt53CodexReminderInstructions_render
+    return M.Gpt51Prompt_render, M.Gpt51ReminderInstructions_render
 end
 
 return M

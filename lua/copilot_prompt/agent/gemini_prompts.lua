@@ -3,7 +3,7 @@
 
 local M = {}
 
-local dai = require 'copilot_prompt.default_agent_instructions'
+local dai = require 'copilot_prompt.agent.default_agent_instructions'
 local responseTranslation = require 'copilot_prompt.base.response_translation_rules'
 
 --- DefaultGeminiAgentPrompt — same structure as DefaultAgentPrompt

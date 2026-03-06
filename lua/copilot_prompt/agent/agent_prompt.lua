@@ -3,8 +3,8 @@
 
 local M = {}
 
-local dai = require 'copilot_prompt.default_agent_instructions'
-local prompt_registry = require 'copilot_prompt.prompt_registry'
+local dai = require 'copilot_prompt.agent.default_agent_instructions'
+local prompt_registry = require 'copilot_prompt.agent.prompt_registry'
 local tag = require('copilot_prompt.base.tag').wrap
 
 --- Get the system prompt content (instructions block).
