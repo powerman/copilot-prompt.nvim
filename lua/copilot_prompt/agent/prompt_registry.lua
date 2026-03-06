@@ -53,6 +53,9 @@ function M.resolveCustomizations(opts)
     elseif capabilities.isGeminiFamily(opts.model) then
         local gemini = require 'copilot_prompt.agent.gemini_prompts'
         systemPromptRenderer, reminderRenderer = gemini.resolve(opts)
+    elseif capabilities.isMinimaxFamily(opts.model) then
+        local minimax = require 'copilot_prompt.agent.minimax_prompts'
+        systemPromptRenderer, reminderRenderer = minimax.resolve(opts)
     elseif capabilities.isGpt52Family(opts.model) then
         local gpt52 = require 'copilot_prompt.agent.openai.gpt52_prompt'
         systemPromptRenderer, reminderRenderer = gpt52.resolve(opts)

@@ -15,7 +15,7 @@ or any other Neovim AI chat plugin.
 
 The prompt generation logic was ported from
 [microsoft/vscode-copilot-chat](https://github.com/microsoft/vscode-copilot-chat)
-version **v0.38.2026022702**.<br/>
+version **v0.39.2026030602**.<br/>
 See [LICENSE.copilot](LICENSE.copilot) (MIT) for the original copyright notice.
 
 ## Features
@@ -39,6 +39,7 @@ The plugin automatically selects the best prompt variant for the given model:
 | `claude-*4.5*`, `claude-*4-5*`             | Anthropic Claude 4.5  |
 | other `claude-*`                           | Anthropic Claude 4.6+ |
 | `gemini-*`                                 | Gemini                |
+| `minimax-*`                                | Minimax               |
 | `gpt-5.3-codex*`                           | GPT-5.3 Codex         |
 | `gpt-5.1-codex*`, `gpt-5.2-codex*`         | GPT-5.1 Codex         |
 | `gpt-5-codex*`                             | GPT-5 Codex           |

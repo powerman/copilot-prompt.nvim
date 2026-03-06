@@ -150,6 +150,13 @@ function M.isXAIFamily(model)
     return model:find 'grok%-code' ~= nil
 end
 
+--- Matches Minimax family models.
+---@param model string
+---@return boolean
+function M.isMinimaxFamily(model)
+    return model:lower():find 'minimax' ~= nil
+end
+
 --- Matches GLM 4.6/4.7 models (ZAI).
 ---@param model string
 ---@return boolean

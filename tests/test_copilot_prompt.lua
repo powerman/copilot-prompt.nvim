@@ -205,6 +205,20 @@ describe('copilot system prompt', function()
             assert.truthy(prompt:find '<reasoningGuidance>')
         end)
 
+        it('uses Minimax prompt for minimax models', function()
+            local prompt = copilot_prompt.system_prompt {
+                identity = 'GitHub Copilot',
+                model = 'minimax-01',
+                tools = {
+                    ReadFile = 'read_file',
+                    CoreRunInTerminal = 'cmd',
+                },
+            }
+            -- Minimax prompt has unique parallel_tool_use_instructions tag.
+            assert.truthy(prompt:find '<parallel_tool_use_instructions>')
+            assert.truthy(prompt:find 'Up to 15 tool calls')
+        end)
+
         it('uses GPT-5 Codex prompt for gpt-5-codex', function()
             local prompt = copilot_prompt.system_prompt {
                 identity = 'GitHub Copilot',
