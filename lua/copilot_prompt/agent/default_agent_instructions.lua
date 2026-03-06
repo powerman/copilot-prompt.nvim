@@ -49,10 +49,10 @@ end
 --- CodesearchModeInstructions — extra instructions added when codesearchMode=true.
 --- Ported from CodesearchModeInstructions in defaultAgentInstructions.tsx.
 --- Also includes CodeBlockFormattingRules (from codeBlockFormattingRules.tsx).
----@param opts Copilot.Options
+---@param _ Copilot.Options
 ---@param tools table
 ---@return string
-local function CodesearchModeInstructions_render(_opts, tools)
+local function CodesearchModeInstructions_render(_, tools)
     local lines = {}
     table.insert(
         lines,

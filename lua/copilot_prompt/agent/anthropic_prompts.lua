@@ -14,10 +14,10 @@ local tn = dai.tn
 --- Ported from ToolSearchToolPrompt in anthropicPrompts.tsx.
 --- Simplified: VS Code-specific custom/regex split is collapsed;
 --- uses only the tool name from opts.tools.ToolSearch.
----@param _opts Copilot.Options
+---@param _ Copilot.Options
 ---@param tools table
 ---@return string
-function M.ToolSearchToolPrompt_render(_opts, tools)
+function M.ToolSearchToolPrompt_render(_, tools)
     if not tools.ToolSearch then
         return ''
     end
