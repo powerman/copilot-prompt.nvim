@@ -2,6 +2,18 @@
 
 ## Project Context (Reference)
 
+Neovim plugin that generates a system prompt (adapted for Neovim)
+close to the official VS Code Copilot prompt, for use with any Neovim AI chat plugin.
+
+The prompt generation logic is ported from <https://github.com/microsoft/vscode-copilot-chat>
+project, implemented in TypeScript, to Lua, preserving the original structure
+as closely as possible to simplify synchronization with new vscode-copilot-chat versions.
+
+The Lua version is further modified to exclude
+VS Code-specific features that are not valid for Neovim,
+and VS Code Copilot tool specifics that are not general enough
+to support tools used by any Neovim AI plugin.
+
 - Minimum Neovim version: 0.10.
 - Lua dialect: Lua 5.1. Use `vim.*` APIs, not `io.*` or `os.*`.
 
@@ -21,6 +33,10 @@
 - `tests/test_*.lua` — Tests using busted-style `describe`/`it` via `mini.test`
   with `luassert` for assertions.
 - `lua/` — Plugin source.
+- `lua/copilot_prompt/agent/` - Ported from `src/extension/prompts/node/agent/`.
+- `lua/copilot_prompt/base/` - Ported from `src/extension/prompts/node/base/`.
+- `lua/copilot_prompt/node/` - Ported from `src/extension/intents/node/`.
+- `lua/copilot_prompt/common/` - Ported from `src/platform/endpoint/common/`.
 
 ### Tasks
 
