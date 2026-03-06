@@ -5,6 +5,7 @@ local M = {}
 
 local tag = require('copilot_prompt.base.tag').wrap
 local capabilities = require 'copilot_prompt.common.chat_model_capabilities'
+local codeBlockFormatting = require 'copilot_prompt.panel.code_block_formatting_rules'
 local fileLinkification = require 'copilot_prompt.agent.file_linkification_instructions'
 local responseTranslation = require 'copilot_prompt.base.response_translation_rules'
 
@@ -43,6 +44,77 @@ local function MathIntegrationRules_render(opts)
     return 'Use LaTeX for math equations in your answers.\n'
         .. 'Wrap inline math equations in $.\n'
         .. 'Wrap more complex blocks of math equations in $$.\n'
+end
+
+--- CodesearchModeInstructions — extra instructions added when codesearchMode=true.
+--- Ported from CodesearchModeInstructions in defaultAgentInstructions.tsx.
+--- Also includes CodeBlockFormattingRules (from codeBlockFormattingRules.tsx).
+---@param opts Copilot.Options
+---@param tools table
+---@return string
+local function CodesearchModeInstructions_render(_opts, tools)
+    local lines = {}
+    table.insert(
+        lines,
+        tag(
+            'codeSearchInstructions',
+            table.concat({
+                "These instructions only apply when the question is about the user's workspace.",
+                "First, analyze the developer's request to determine how complicated their task is. Leverage any of the tools available to you to gather the context needed to provided a complete and accurate response. Keep your search focused on the developer's request, and don't run extra tools if the developer's request clearly can be satisfied by just one.",
+                "If the developer wants to implement a feature and they have not specified the relevant files, first break down the developer's request into smaller concepts and think about the kinds of files you need to grasp each concept.",
+                "If you aren't sure which tool is relevant, you can call multiple tools. You can call tools repeatedly to take actions or gather as much context as needed.",
+                "Don't make assumptions about the situation. Gather enough context to address the developer's request without going overboard.",
+                'Think step by step:',
+                "1. Read the provided relevant workspace information (code excerpts, file names, and symbols) to understand the user's workspace.",
+                "2. Consider how to answer the user's prompt based on the provided information and your specialized coding knowledge. Always assume that the user is asking about the code in their workspace instead of asking a general programming question. Prefer using variables, functions, types, and classes from the workspace over those from the standard library.",
+                "3. Generate a response that clearly and accurately answers the user's question. Reference symbols with backticks (e.g. `namespace.VariableName` in `path/to/file.ts`) and reference files with their relative path (e.g. `path/to/file.ts`).",
+                'Remember that you MUST reference all relevant symbols from the workspace using backtick formatting.',
+                'Remember that you MUST reference all relevant workspace files using their relative path.',
+            }, '\n')
+        )
+    )
+    table.insert(
+        lines,
+        tag(
+            'codeSearchToolUseInstructions',
+            table.concat({
+                "These instructions only apply when the question is about the user's workspace.",
+                "Unless it is clear that the user's question relates to the current workspace, you should avoid using the code search tools and instead prefer to answer the user's question directly.",
+                'Remember that you can call multiple tools in one response.',
+                (
+                    tools.Codebase
+                        and ('Use ' .. tn(tools, 'Codebase') .. " to search for high level concepts or descriptions of functionality in the user's question. This is the best place to start if you don't know where to look or the exact strings found in the codebase.")
+                    or 'Use semantic search to find high level concepts or descriptions of functionality.'
+                ),
+                (tools.SearchWorkspaceSymbols and tools.FindTextInFiles)
+                        and ('Prefer ' .. tn(tools, 'SearchWorkspaceSymbols') .. ' over ' .. tn(
+                            tools,
+                            'FindTextInFiles'
+                        ) .. ' when you have precise code identifiers to search for.')
+                    or nil,
+                (tools.FindTextInFiles and tools.Codebase)
+                        and ('Prefer ' .. tn(tools, 'FindTextInFiles') .. ' over ' .. tn(
+                            tools,
+                            'Codebase'
+                        ) .. ' when you have precise keywords to search for.')
+                    or nil,
+                (tools.FindFiles or tools.FindTextInFiles or tools.GetScmChanges)
+                        and ('The tools ' .. table.concat(
+                            vim.tbl_filter(function(x)
+                                return x ~= nil
+                            end, {
+                                tools.FindFiles and tn(tools, 'FindFiles') or nil,
+                                tools.FindTextInFiles and tn(tools, 'FindTextInFiles') or nil,
+                                tools.GetScmChanges and tn(tools, 'GetScmChanges') or nil,
+                            }),
+                            ', '
+                        ) .. ' are deterministic and comprehensive, so do not repeatedly invoke them with the same arguments.')
+                    or nil,
+            }, '\n')
+        )
+    )
+    table.insert(lines, codeBlockFormatting.render())
+    return table.concat(lines, '\n')
 end
 
 --- Generic editing tips applicable to all models.
@@ -526,6 +598,10 @@ function M.DefaultAgentPrompt_render(opts)
     table.insert(parts, buildInstructionsTag(opts, tools))
     table.insert(parts, buildToolUseInstructionsTag(opts, tools))
 
+    if opts.codesearchMode then
+        table.insert(parts, CodesearchModeInstructions_render(opts, tools))
+    end
+
     -- EditFile instructions (when ApplyPatch is not available)
     if tools.EditFile and not tools.ApplyPatch then
         table.insert(parts, EditFileInstructions_render(opts, tools))
@@ -691,6 +767,10 @@ function M.AlternateGPTPrompt_render(opts)
     -- toolUseInstructions (same as default but with FetchWebPage additions)
     table.insert(parts, buildToolUseInstructionsTag(opts, tools))
 
+    if opts.codesearchMode then
+        table.insert(parts, CodesearchModeInstructions_render(opts, tools))
+    end
+
     -- EditFile/ApplyPatch instructions
     if tools.EditFile and not tools.ApplyPatch then
         table.insert(parts, EditFileInstructions_render(opts, tools))
@@ -760,6 +840,8 @@ end
 M.buildInstructionsTag = buildInstructionsTag
 M.buildToolUseInstructionsTag = buildToolUseInstructionsTag
 M.EditFileInstructions_render = EditFileInstructions_render
+M.CodesearchModeInstructions_render = CodesearchModeInstructions_render
+M.CodeBlockFormattingRules_render = codeBlockFormatting.render
 M.outputFormattingTag = outputFormattingTag
 M.outputFormattingTagWithLinks = outputFormattingTagWithLinks
 M.MathIntegrationRules_render = MathIntegrationRules_render

@@ -146,6 +146,10 @@ describe('copilot system prompt', function()
             }
             assert.truthy(prompt:find 'autonomy_and_persistence')
             assert.truthy(prompt:find 'Persist until the task is fully handled')
+            assert.truthy(prompt:find 'user_updates_spec')
+            assert.truthy(prompt:find 'High%-quality plans')
+            assert.truthy(prompt:find 'ambition_vs_precision')
+            assert.truthy(prompt:find 'progress_updates')
         end)
 
         it('uses OpenAI prompt for gpt-4o', function()

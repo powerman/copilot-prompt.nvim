@@ -10,6 +10,59 @@ local responseTranslation = require 'copilot_prompt.base.response_translation_ru
 
 local tn = dai.tn
 
+--- ToolSearchToolPrompt — appended to toolUseInstructions when ToolSearch tool is available.
+--- Ported from ToolSearchToolPrompt in anthropicPrompts.tsx.
+--- Simplified: VS Code-specific custom/regex split is collapsed;
+--- uses only the tool name from opts.tools.ToolSearch.
+---@param _opts Copilot.Options
+---@param tools table
+---@return string
+function M.ToolSearchToolPrompt_render(_opts, tools)
+    if not tools.ToolSearch then
+        return ''
+    end
+    local searchToolName = tn(tools, 'ToolSearch')
+    return tag(
+        'toolSearchInstructions',
+        table.concat({
+            'Use the '
+                .. searchToolName
+                .. ' tool to search for deferred tools before calling them.',
+            '',
+            tag(
+                'mandatory',
+                table.concat({
+                    'You MUST use the '
+                        .. searchToolName
+                        .. ' tool to load deferred tools BEFORE calling them directly.',
+                    'This is a BLOCKING REQUIREMENT - deferred tools are NOT available until you load them using the '
+                        .. searchToolName
+                        .. ' tool. Once a tool appears in the results, it is immediately available to call.',
+                    '',
+                    'Why this is required:',
+                    '- Deferred tools are not loaded until discovered via ' .. searchToolName,
+                    '- Calling a deferred tool without first loading it will fail',
+                }, '\n')
+            ),
+            '',
+            tag(
+                'incorrectUsagePatterns',
+                table.concat({
+                    'NEVER do these:',
+                    '- Calling a deferred tool directly without loading it first with '
+                        .. searchToolName,
+                    '- Calling '
+                        .. searchToolName
+                        .. ' again for a tool that was already returned by a previous search',
+                    '- Retrying '
+                        .. searchToolName
+                        .. ' repeatedly if it fails or returns no results. If a search returns no matching tools, the tool is not available. Do NOT retry with different patterns — inform the user that the tool or MCP server is unavailable and stop.',
+                }, '\n')
+            ),
+        }, '\n')
+    )
+end
+
 --- DefaultAnthropicAgentPrompt — for older Claude models (e.g. claude-sonnet-4).
 ---@param opts Copilot.Options
 ---@return string
@@ -116,6 +169,7 @@ end
 ---@return string
 function M.Claude45DefaultPrompt_render(opts)
     local tools = dai.detectToolCapabilities(opts.tools)
+    local contextCompactionEnabled = opts.anthropicContextEditingEnabled
     local parts = {}
 
     table.insert(
@@ -166,6 +220,16 @@ function M.Claude45DefaultPrompt_render(opts)
                         '',
                         'Skip task tracking for simple, single-step operations that can be completed directly without additional planning.',
                     }, '\n')
+                )
+            )
+        end
+        if contextCompactionEnabled then
+            table.insert(workflow, '')
+            table.insert(
+                workflow,
+                tag(
+                    'contextManagement',
+                    'Your context window is automatically managed through compaction, enabling you to work on tasks of any length without interruption. Work as persistently and autonomously as needed to complete tasks fully. Do not preemptively stop work, summarize progress unnecessarily, or mention context management to the user.'
                 )
             )
         end
@@ -291,6 +355,9 @@ function M.Claude45DefaultPrompt_render(opts)
             lines,
             'Tools can be disabled by the user. You may see tools used previously in the conversation that are not currently available. Be careful to only use the tools that are currently available to you.'
         )
+        if tools.ToolSearch then
+            table.insert(lines, M.ToolSearchToolPrompt_render(opts, tools))
+        end
         table.insert(parts, tag('toolUseInstructions', table.concat(lines, '\n')))
     end
 
@@ -342,6 +409,7 @@ end
 ---@return string
 function M.Claude46DefaultPrompt_render(opts)
     local tools = dai.detectToolCapabilities(opts.tools)
+    local contextCompactionEnabled = opts.anthropicContextEditingEnabled
     local parts = {}
 
     table.insert(
@@ -445,6 +513,16 @@ function M.Claude46DefaultPrompt_render(opts)
                     '',
                     'Skip task tracking for simple, single-step operations that can be completed directly without additional planning.',
                 }, '\n')
+            )
+        )
+    end
+
+    if contextCompactionEnabled then
+        table.insert(
+            parts,
+            tag(
+                'contextManagement',
+                'Your conversation history is automatically compressed as context fills, enabling you to work persistently and complete tasks fully without hitting limits.'
             )
         )
     end
@@ -580,6 +658,9 @@ function M.Claude46DefaultPrompt_render(opts)
             lines,
             'Tools can be disabled by the user. You may see tools used previously in the conversation that are not currently available. Be careful to only use the tools that are currently available to you.'
         )
+        if tools.ToolSearch then
+            table.insert(lines, M.ToolSearchToolPrompt_render(opts, tools))
+        end
         table.insert(parts, tag('toolUseInstructions', table.concat(lines, '\n')))
     end
 
@@ -638,6 +719,20 @@ function M.AnthropicReminderInstructions_render(opts)
     )
     result = result
         .. 'Do NOT create a new markdown file to document each change or summarize your work unless specifically requested by the user.\n'
+    if opts.anthropicContextEditingEnabled then
+        result = result
+            .. '\nIMPORTANT: Do NOT view your memory directory before every task. Do NOT assume your context will be interrupted or reset. Your context is managed automatically — you do not need to urgently save progress to memory. Only use memory as described in the memoryInstructions section. Do not create memory files to record routine progress or status updates unless the user explicitly asks you to.\n'
+    end
+    if tools.ToolSearch then
+        result = result
+            .. '\nIMPORTANT: Before calling any deferred tool that was not previously returned by '
+            .. tn(tools, 'ToolSearch')
+            .. ', you MUST first use '
+            .. tn(tools, 'ToolSearch')
+            .. ' to load it. Calling a deferred tool without first loading it will fail. Tools returned by '
+            .. tn(tools, 'ToolSearch')
+            .. ' are automatically expanded and immediately available - do not search for them again.\n'
+    end
     return result
 end
 

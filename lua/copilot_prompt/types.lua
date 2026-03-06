@@ -39,6 +39,12 @@
 ---@field FetchWebPage? string
 --- Get diagnostics/errors from the editor.
 ---@field GetErrors? string
+--- Tool search (Anthropic deferred tools, "tool_search_tool_regex").
+---@field ToolSearch? string
+--- Search workspace symbols.
+---@field SearchWorkspaceSymbols? string
+--- Get SCM (git) changes.
+---@field GetScmChanges? string
 
 ---@class Copilot.Options
 --- Identity string to use in identity rules (e.g. "GitHub Copilot", "CodeCompanion").
@@ -58,9 +64,12 @@
 --- When true, uses the alternate GPT prompt for gpt-* models.
 ---@field enableAlternateGptPrompt? boolean
 --- Agentic Ask mode (code search mode).
---- When true, no Agent mode (related to editing files/executing commands) instructions are added.
+--- When true, removes Agent-mode editing/execution instructions
+--- and adds code-search specific instructions.
 ---@field codesearchMode? boolean
 --- When true, adds LaTeX math formatting instructions.
 ---@field mathEnabled? boolean
+--- When true, Anthropic context compaction is enabled for supported models.
+---@field anthropicContextEditingEnabled? boolean
 --- Available tools mapping.
 ---@field tools Copilot.Tools

@@ -134,11 +134,15 @@ require('copilot_prompt').system_prompt {
     -- Uses the structured-workflow alternate prompt for gpt-* models.
     enableAlternateGptPrompt = false,
 
-    -- When true, omits Agent-mode instructions (file editing, command execution).
+    -- When true, removes Agent-mode editing/execution instructions
+    -- and adds code-search specific instructions.
     codesearchMode = false,
 
     -- Adds LaTeX math formatting instructions.
     mathEnabled = false,
+
+    -- When true, Anthropic context compaction is enabled for supported models.
+    anthropicContextEditingEnabled = false,
 
     -- Maps Copilot tool capability names to the actual tool names in your AI plugin.
     -- Omit a key (or set it to nil) if the tool is not available.
@@ -159,6 +163,9 @@ require('copilot_prompt').system_prompt {
         SearchSubagent = nil, -- Delegated search via a sub-agent.
         FetchWebPage = nil, -- Fetch a web page.
         GetErrors = nil, -- Get diagnostics/errors from the editor.
+        ToolSearch = nil, -- Tool search (Anthropic deferred tools).
+        SearchWorkspaceSymbols = nil, -- Search workspace symbols.
+        GetScmChanges = nil, -- Get SCM (git) changes.
     },
 }
 ```

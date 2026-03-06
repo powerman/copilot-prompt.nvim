@@ -14,7 +14,6 @@ local tn = dai.tn
 ---@return string
 function M.DefaultMinimaxAgentPrompt_render(opts)
     local tools = dai.detectToolCapabilities(opts.tools)
-    local identity = opts.identity ~= '' and opts.identity or 'GitHub Copilot'
     local parts = {}
 
     table.insert(
@@ -25,9 +24,9 @@ function M.DefaultMinimaxAgentPrompt_render(opts)
                 'You are an expert AI programming assistant, working with a user in the Neovim editor.',
                 '',
                 'When asked for your name, you must respond with "'
-                    .. identity
+                    .. opts.identity
                     .. '". When asked about the model you are using, you must state that you are using '
-                    .. identity
+                    .. opts.identity
                     .. '.',
                 '',
                 "Follow the user's requirements carefully & to the letter.",

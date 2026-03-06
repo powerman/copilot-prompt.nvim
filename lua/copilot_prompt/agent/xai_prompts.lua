@@ -69,6 +69,14 @@ function M.DefaultGrokCodeFastAgentPrompt_render(opts)
             lines,
             "Reproducibility and dependencies: Follow the project's package manager and configuration; prefer minimal, pinned, widely-used libraries and update manifests or lockfiles appropriately. Prefer adding or updating tests when you change public behavior."
         )
+        table.insert(
+            lines,
+            'Build characterization: Before stating that a project "has no build" or requires a specific build step, verify by checking the provided context or quickly looking for common build config files (for example: `package.json`, `pnpm-lock.yaml`, `requirements.txt`, `pyproject.toml`, `setup.py`, `Makefile`, `Dockerfile`, `build.gradle`, `pom.xml`). If uncertain, say what you know based on the available evidence and proceed with minimal setup instructions; note that you can adapt if additional build configs exist.'
+        )
+        table.insert(
+            lines,
+            'Deliverables for non-trivial code generation: Produce a complete, runnable solution, not just a snippet. Create the necessary source files plus a small runner or test/benchmark harness when relevant, a minimal `README.md` with usage and troubleshooting, and a dependency manifest (for example, `package.json`, `requirements.txt`, `pyproject.toml`) updated or added as appropriate. If you intentionally choose not to create one of these artifacts, briefly say why.'
+        )
         if not opts.codesearchMode then
             table.insert(
                 lines,

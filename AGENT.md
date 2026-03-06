@@ -36,6 +36,7 @@ to support tools used by any Neovim AI plugin.
 - `lua/copilot_prompt/agent/` - Ported from `src/extension/prompts/node/agent/`.
 - `lua/copilot_prompt/base/` - Ported from `src/extension/prompts/node/base/`.
 - `lua/copilot_prompt/node/` - Ported from `src/extension/intents/node/`.
+- `lua/copilot_prompt/panel/` - Ported from `src/extension/prompts/node/panel/`.
 - `lua/copilot_prompt/common/` - Ported from `src/platform/endpoint/common/`.
 
 ### Tasks
@@ -213,3 +214,19 @@ end)
 ### Neovim API
 
 - `vim.keymap.set` — always provide `desc` in opts for which-key discoverability.
+
+### Porting TypeScript to Lua
+
+#### Unicode in string literals
+
+When copying string literals from TypeScript `.tsx` files to Lua,
+copy the **rendered text** (the actual Unicode characters),
+not escape sequences like `\xe2\x80\x94`.
+
+Lua 5.1 does not support `\xNN` hex escapes in strings.
+Selene will report `bad_string_escape` warnings,
+and if the escapes are converted naively (e.g. via Python's `decode('latin-1')`),
+the result is mojibake: `\xe2\x80\x94` (em dash U+2014 in UTF-8)
+becomes `â\x80\x94` (three separate Latin-1 codepoints) instead of `—`.
+
+Always paste characters like `—`, `→`, `≤`, `【`, `】`, `†` directly into Lua strings.
