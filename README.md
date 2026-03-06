@@ -25,9 +25,12 @@ See [LICENSE.copilot](LICENSE.copilot) (MIT) for the original copyright notice.
 - Configurable LLM identity.
 - Your tool names included in the prompt with generic instructions per tool type.
 - Optional structured-workflow prompt for `gpt-*` models.
-- Optional code search mode: omits Agent-mode instructions (file editing, command execution).
+- Optional code search ("Ask") mode:
+  omits Agent-mode instructions (file editing, command execution).
+- Optional Anthropic context compaction.
 - Option to omit base identity, safety, and main prompt sections.
 - Option to add LaTeX math formatting instructions.
+- Option to always output Markdown code block formatting instructions.
 
 ### Model-specific prompts
 
@@ -82,6 +85,7 @@ local copilot_prompt = require('copilot_prompt').system_prompt {
         FindFiles = 'file_search',
         FetchWebPage = 'fetch_webpage',
         GetErrors = 'get_diagnostics',
+        GetScmChanges = 'get_changed_files',
     },
 }
 ```
@@ -104,6 +108,7 @@ local copilot_prompt = require('copilot_prompt').system_prompt {
         FindFiles = 'neovim__find_files',
         FetchWebPage = 'fetch_webpage',
         GetErrors = 'get_diagnostics',
+        GetScmChanges = 'get_changed_files',
     },
 }
 ```
