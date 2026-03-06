@@ -402,6 +402,44 @@ describe('copilot system prompt', function()
         end)
     end)
 
+    describe('code block formatting', function()
+        it('includes code block instructions when codeBlockFormatting is true', function()
+            local prompt = copilot_prompt.system_prompt {
+                identity = 'GitHub Copilot',
+                model = 'unknown',
+                tools = {},
+                codeBlockFormatting = true,
+            }
+            assert.truthy(prompt:find '4 backticks')
+        end)
+
+        it('excludes code block instructions by default', function()
+            local prompt = copilot_prompt.system_prompt {
+                identity = 'GitHub Copilot',
+                model = 'unknown',
+                tools = {},
+            }
+            assert.falsy(prompt:find '4 backticks')
+        end)
+
+        it(
+            'does not duplicate code block instructions when codesearchMode is also true',
+            function()
+                local prompt = copilot_prompt.system_prompt {
+                    identity = 'GitHub Copilot',
+                    model = 'unknown',
+                    tools = {},
+                    codesearchMode = true,
+                    codeBlockFormatting = true,
+                }
+                -- codesearchMode already includes code block instructions;
+                -- languageId appears exactly once in the example block.
+                local _, count = prompt:gsub('languageId', '')
+                assert.are.equal(1, count)
+            end
+        )
+    end)
+
     describe('reminder instructions', function()
         it('includes reminder instructions in the prompt', function()
             local prompt = copilot_prompt.system_prompt {

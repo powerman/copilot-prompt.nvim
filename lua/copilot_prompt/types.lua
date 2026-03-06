@@ -71,5 +71,13 @@
 ---@field mathEnabled? boolean
 --- When true, Anthropic context compaction is enabled for supported models.
 ---@field anthropicContextEditingEnabled? boolean
+--- When true, adds code block formatting instructions to the prompt,
+--- instructing the model to use 4-backtick fenced blocks with language ID and file path.
+--- This is a Neovim adaptation: VS Code Copilot renders code blocks itself and
+--- only includes these instructions in codesearchMode.
+--- Enable this if your AI plugin renders Markdown responses without built-in code block guidance.
+--- When codesearchMode is also true, the instructions are already included
+--- and this option has no effect (no duplication).
+---@field codeBlockFormatting? boolean
 --- Available tools mapping.
 ---@field tools Copilot.Tools

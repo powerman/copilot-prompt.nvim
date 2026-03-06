@@ -59,10 +59,24 @@ function M.render(opts)
     -- Append reminder instructions from AgentUserMessage.
     local reminderPart = AgentUserMessage(opts, reminderRenderer)
 
-    if reminderPart ~= '' then
-        return baseInstructions .. '\n' .. reminderPart
+    -- Append code block formatting rules if requested and not already included
+    -- via codesearchMode (which already embeds them in CodesearchModeInstructions).
+    local codeBlockPart = ''
+    if opts.codeBlockFormatting and not opts.codesearchMode then
+        codeBlockPart = dai.CodeBlockFormattingRules_render()
     end
-    return baseInstructions
+
+    local parts = {}
+    if baseInstructions ~= '' then
+        table.insert(parts, baseInstructions)
+    end
+    if reminderPart ~= '' then
+        table.insert(parts, reminderPart)
+    end
+    if codeBlockPart ~= '' then
+        table.insert(parts, codeBlockPart)
+    end
+    return table.concat(parts, '\n')
 end
 
 return M

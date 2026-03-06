@@ -168,6 +168,12 @@ OPTIONS                                         *copilot-prompt-usage-options*
         -- When true, Anthropic context compaction is enabled for supported models.
         anthropicContextEditingEnabled = false,
     
+        -- When true, adds code block formatting instructions to the prompt.
+        -- VS Code Copilot renders code blocks itself and omits these instructions in agent mode.
+        -- Enable this when your AI plugin renders Markdown responses and needs explicit guidance.
+        -- Has no effect when codesearchMode=true (instructions are already included there).
+        codeBlockFormatting = false,
+    
         -- Maps Copilot tool capability names to the actual tool names in your AI plugin.
         -- Omit a key (or set it to nil) if the tool is not available.
         tools = {
@@ -268,38 +274,18 @@ MCPHub.
             SearchSubagent = nil, -- No such tool in CodeCompanion.
             FetchWebPage = first('fetch_webpage', 'tavily_mcp__tavily_extract'),
             GetErrors = first 'get_diagnostics',
+            ToolSearch = nil, -- No such tool in CodeCompanion.
+            SearchWorkspaceSymbols = nil, -- No such tool in CodeCompanion.
+            GetScmChanges = first 'get_changed_files',
         }
     end
     
-    -- Extracted from CodeCompanion's CONSTANTS.SYSTEM_PROMPT, with minor change.
+    -- Additional CodeCompanion formatting instructions not covered by copilot-prompt.nvim.
     local codecompanion_instructions = [[
     <outputFormattingInstructions>
     Use Markdown formatting in your answers.
     
     DO NOT use H1 or H2 headers in your response.
-    
-    When suggesting code changes or new content, use Markdown code blocks.
-    
-    To start a code block, use 4 backticks.
-    After the backticks, add the programming language name as the language ID
-    and the file path within curly braces if available.
-    To close a code block, use 4 backticks on a new line.
-    If you want the user to decide where to place the code, do not add the file path.
-    In the code block, use a line comment with '...existing code...'
-    to indicate code that is already present in the file.
-    Ensure this comment is specific to the programming language.
-    Code block example:
-    
-    ````languageId {path/to/file}
-    // ...existing code...
-    { changed code }
-    // ...existing code...
-    { changed code }
-    // ...existing code...
-    ````
-    
-    Ensure line comments use the correct syntax for the programming language
-    (e.g. "#" for Python, "--" for Lua).
     
     Avoid wrapping the whole response in triple backticks.
     
@@ -338,6 +324,7 @@ MCPHub.
         local copilot_prompt = require('copilot_prompt').system_prompt {
             identity = 'CodeCompanion',
             model = get_model(ctx),
+            codeBlockFormatting = true,
             tools = tools,
         }
         return copilot_prompt
