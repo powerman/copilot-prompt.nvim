@@ -248,7 +248,7 @@ local function make_tools(available)
         GetErrors = first 'get_diagnostics',
         ToolSearch = nil, -- No such tool in CodeCompanion.
         SearchWorkspaceSymbols = nil, -- No such tool in CodeCompanion.
-        GetScmChanges = first 'get_changed_files',
+        GetScmChanges = first('get_changed_files', 'git__git_diff_unstaged'),
     }
 end
 
