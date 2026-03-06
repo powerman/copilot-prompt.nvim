@@ -215,6 +215,7 @@ local function make_tools(available)
     end
     -- NOTE: Some tools are provided by extra MCP servers which needs to be installed with MCPHub:
     -- - https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem
+    -- - https://github.com/modelcontextprotocol/servers/tree/main/src/git
     -- - https://github.com/tavily-ai/tavily-mcp
     -- - https://github.com/sonirico/mcp-shell
     return {
