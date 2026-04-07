@@ -192,7 +192,7 @@ Below is a full example that wires `copilot-prompt.nvim` into CodeCompanion + MC
 ---@module 'copilot_prompt'
 
 ---@param ctx CodeCompanion.SystemPrompt.Context
----@return string CodeCompanion adapter's model name.
+---@return string model CodeCompanion adapter's model name.
 local function get_model(ctx)
     local adapter = ctx.adapter
     local model = ''
