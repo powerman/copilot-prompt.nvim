@@ -41,6 +41,11 @@ function M.resolveCustomizations(opts)
         local gpt5_codex = require 'copilot_prompt.agent.openai.gpt5_codex_prompt'
         systemPromptRenderer, reminderRenderer = gpt5_codex.resolve(opts)
         -- gpt-5-codex does not override identity/safety in the original.
+    elseif capabilities.isGpt54(opts.model) then
+        local gpt54 = require 'copilot_prompt.agent.openai.gpt54_prompt'
+        systemPromptRenderer, reminderRenderer = gpt54.resolve(opts)
+        identityRenderer = copilot_identity.GPT5CopilotIdentityRule_render
+        safetyRenderer = safety_rules.Gpt5SafetyRule_render
     elseif capabilities.isXAIFamily(opts.model) then
         local xai = require 'copilot_prompt.agent.xai_prompts'
         systemPromptRenderer, reminderRenderer = xai.resolve(opts)

@@ -28,7 +28,7 @@ plugin.
 
 The prompt generation logic was ported from microsoft/vscode-copilot-chat
 <https://github.com/microsoft/vscode-copilot-chat> version
-**v0.39.2026030602**. See LICENSE.copilot <LICENSE.copilot> (MIT) for the
+**v0.43.2026040705**. See LICENSE.copilot <LICENSE.copilot> (MIT) for the
 original copyright notice.
 
 

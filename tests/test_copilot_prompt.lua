@@ -95,7 +95,7 @@ describe('copilot system prompt', function()
             assert.truthy(prompt:find 'communicationStyle')
         end)
 
-        it('uses Claude 4.6 prompt for newer claude models', function()
+        it('uses Claude 4.6 Sonnet prompt for newer claude models', function()
             local prompt = copilot_prompt.system_prompt {
                 identity = 'GitHub Copilot',
                 model = 'claude-4.6-sonnet',
@@ -106,6 +106,37 @@ describe('copilot system prompt', function()
             assert.truthy(prompt:find 'securityRequirements')
             assert.truthy(prompt:find 'operationalSafety')
             assert.truthy(prompt:find 'implementationDiscipline')
+            -- Sonnet-specific exploration guidance
+            assert.truthy(prompt:find 'Gather enough context to proceed confidently')
+        end)
+
+        it('uses Claude 4.6 Opus prompt for opus models', function()
+            local prompt = copilot_prompt.system_prompt {
+                identity = 'GitHub Copilot',
+                model = 'claude-opus-4.6',
+                tools = {
+                    ReadFile = 'read_file',
+                },
+            }
+            assert.truthy(prompt:find 'securityRequirements')
+            assert.truthy(prompt:find 'operationalSafety')
+            assert.truthy(prompt:find 'implementationDiscipline')
+            -- Opus-specific bounded exploration guidance
+            assert.truthy(prompt:find 'Gather sufficient context to act confidently')
+        end)
+
+        it('uses GPT-5.4 prompt for gpt-5.4 models', function()
+            local prompt = copilot_prompt.system_prompt {
+                identity = 'GitHub Copilot',
+                model = 'gpt-5.4',
+                tools = {
+                    ReadFile = 'read_file',
+                },
+            }
+            assert.truthy(prompt:find 'coding_agent_instructions')
+            assert.truthy(prompt:find 'coding agent running in Neovim')
+            assert.truthy(prompt:find 'personality')
+            assert.truthy(prompt:find 'values')
         end)
 
         it('uses Gemini prompt for gemini models', function()
@@ -484,6 +515,20 @@ describe('copilot system prompt', function()
                 },
             }
             assert.truthy(prompt:find 'Do NOT create a new markdown file')
+        end)
+
+        it('includes optimized reminder for Claude 4.6+', function()
+            local prompt = copilot_prompt.system_prompt {
+                identity = 'GitHub Copilot',
+                model = 'claude-4.6-sonnet',
+                tools = {
+                    ReplaceString = 'replace_string_in_file',
+                    MultiReplaceString = 'multi_replace_string_in_file',
+                },
+            }
+            assert.truthy(prompt:find 'Do NOT create markdown files to document changes')
+            -- Optimized reminder does NOT include ToolSearch block
+            assert.falsy(prompt:find 'Before calling any deferred tool')
         end)
 
         it('includes GPT-5.3 Codex reminder', function()

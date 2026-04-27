@@ -50,4 +50,20 @@ function M.render()
     )
 end
 
+--- Condensed fileLinkification instructions for optimized prompt configurations.
+--- Ported from FileLinkificationInstructionsOptimized in fileLinkificationInstructions.tsx,
+--- adapted for Neovim (backtick style instead of markdown links).
+---@return string
+function M.renderOptimized()
+    return tag(
+        'fileLinkification',
+        table.concat({
+            'Use workspace-relative paths and 1-based line numbers. Wrap file references in backticks.',
+            'Formats: `path/to/file.ts`, `file.ts:10`, `file.ts:10` and `file.ts:20` (non-contiguous lines separately).',
+            "Rules: Use '/' separator only. No file:// schemes. Reference only existing files.",
+            'FORBIDDEN: Markdown links, ranges like :10-12, fragment syntax #L10, URI schemes.',
+        }, '\n')
+    )
+end
+
 return M

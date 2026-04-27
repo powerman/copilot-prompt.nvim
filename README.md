@@ -15,7 +15,7 @@ or any other Neovim AI chat plugin.
 
 The prompt generation logic was ported from
 [microsoft/vscode-copilot-chat](https://github.com/microsoft/vscode-copilot-chat)
-version **v0.39.2026030602**.<br/>
+version **v0.43.2026040705**.<br/>
 See [LICENSE.copilot](LICENSE.copilot) (MIT) for the original copyright notice.
 
 ## Features

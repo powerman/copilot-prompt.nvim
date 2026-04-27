@@ -21,6 +21,7 @@ function M.modelSupportsApplyPatch(model)
         or M.isGpt52CodexFamily(model)
         or M.isGpt53Codex(model)
         or M.isGpt52Family(model)
+        or M.isGpt54(model)
 end
 
 --- Model supports replace_string_in_file as an edit tool.
@@ -36,7 +37,7 @@ end
 ---@param model string
 ---@return boolean
 function M.modelSupportsMultiReplaceString(model)
-    return M.isAnthropicFamily(model)
+    return M.isAnthropicFamily(model) or M.isMinimaxFamily(model)
 end
 
 --- The model is capable of using replace_string_in_file exclusively,
@@ -47,6 +48,7 @@ function M.modelCanUseReplaceStringExclusively(model)
     return M.isAnthropicFamily(model)
         or model:find 'grok%-code' ~= nil
         or model:lower():find 'gemini%-3' ~= nil
+        or M.isMinimaxFamily(model)
 end
 
 --- The model is capable of using apply_patch as an edit tool exclusively,
@@ -183,6 +185,17 @@ function M.isGpt51CodexFamily(model)
         return false
     end
     return model:find '^gpt%-5%.1' ~= nil and model:find '%-codex' ~= nil
+end
+
+--- Matches gpt-5.4 family models.
+--- Ported from isGpt54 in chatModelCapabilities.ts (family name check only; hashes not implemented).
+---@param model string|nil
+---@return boolean
+function M.isGpt54(model)
+    if not model then
+        return false
+    end
+    return model:find '^gpt%-5%.4' ~= nil
 end
 
 return M
