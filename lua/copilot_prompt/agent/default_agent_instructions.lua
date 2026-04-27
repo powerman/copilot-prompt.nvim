@@ -425,12 +425,13 @@ local function buildInstructionsTag(opts, tools)
         )
     end
     if tools.CoreRunInTerminal then
-        table.insert(
-            lines,
+        local terminalLine =
             'NEVER print out a codeblock with a terminal command to run unless the user asked for it. Use the '
-                .. tn(tools, 'CoreRunInTerminal')
-                .. ' tool instead.'
-        )
+        if tools.ExecutionSubagent then
+            terminalLine = terminalLine .. tn(tools, 'ExecutionSubagent') .. ' or '
+        end
+        terminalLine = terminalLine .. tn(tools, 'CoreRunInTerminal') .. ' tool instead.'
+        table.insert(lines, terminalLine)
     end
     table.insert(lines, "You don't need to read a file if it's already provided in context.")
     return tag('instructions', table.concat(lines, '\n'))
@@ -513,12 +514,32 @@ local function buildToolUseInstructionsTag(_, tools)
                 .. ' to do a semantic search across the workspace.'
         )
     end
+    if tools.ExecutionSubagent then
+        table.insert(
+            lines,
+            'For most execution tasks and terminal commands, use '
+                .. tn(tools, 'ExecutionSubagent')
+                .. ' to run commands and get relevant portions of the output instead of using '
+                .. tn(tools, 'CoreRunInTerminal')
+                .. '. Use '
+                .. tn(tools, 'CoreRunInTerminal')
+                .. ' in rare cases when you want the entire output of a single command without truncation.'
+        )
+    end
     if tools.CoreRunInTerminal then
         table.insert(
             lines,
             "Don't call the "
                 .. tn(tools, 'CoreRunInTerminal')
                 .. ' tool multiple times in parallel. Instead, run one command and wait for the output before running the next command.'
+        )
+    end
+    if tools.ExecutionSubagent then
+        table.insert(
+            lines,
+            "Don't call "
+                .. tn(tools, 'ExecutionSubagent')
+                .. ' multiple times in parallel. Instead, invoke one subagent and wait for its response before running the next command.'
         )
     end
     table.insert(

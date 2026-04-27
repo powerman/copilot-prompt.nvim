@@ -50,4 +50,27 @@ function M.render()
     )
 end
 
+--- Optimized variant used by Claude 4.6+ prompt configurations.
+--- Removes usage examples and section headers while preserving core formatting requirements.
+---@return string
+function M.renderOptimized()
+    return tag(
+        'fileLinkification',
+        table.concat({
+            'When mentioning files or line numbers, use workspace-relative paths and 1-based line numbers. NEVER wrap file references in backticks.',
+            '',
+            'Formats: path/to/file.ts, path/to/file.ts:10, path/to/file.ts:10-12',
+            '',
+            'Rules:',
+            '- Without line numbers, display text must match target path',
+            "- Use '/' as separator. Strip drive letters and external folders",
+            '- Do not use file:// or vscode:// schemes',
+            '- Non-contiguous lines require separate references. NEVER use comma-separated references like :10-12, :20',
+            '- Only reference files that exist in the workspace',
+            '',
+            'FORBIDDEN: inline code for file names (`file.ts`), plain text file names without precise location, line citations without path ("Line 86"), combining multiple line references in one reference.',
+        }, '\n')
+    )
+end
+
 return M

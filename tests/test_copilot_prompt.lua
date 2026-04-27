@@ -262,6 +262,37 @@ describe('copilot system prompt', function()
             assert.truthy(prompt:find '<ambition_vs_precision>')
             assert.truthy(prompt:find 'surgical precision')
         end)
+
+        it('uses GPT-5.4 prompt for gpt-5.4 models', function()
+            local prompt = copilot_prompt.system_prompt {
+                identity = 'GitHub Copilot',
+                model = 'gpt-5.4',
+                tools = {
+                    ApplyPatch = 'apply_patch',
+                    ReadFile = 'read_file',
+                },
+            }
+            assert.truthy(prompt:find '<coding_agent_instructions>')
+            assert.truthy(prompt:find '<personality>')
+            assert.truthy(prompt:find '<values>')
+            assert.truthy(prompt:find '<editing_constraints>')
+            assert.truthy(prompt:find '<frontend_tasks>')
+            assert.truthy(prompt:find '<task_execution>')
+            assert.truthy(prompt:find '<autonomy_and_persistence>')
+        end)
+
+        it('uses Claude 4.6 Opus prompt for claude-opus-4.6', function()
+            local prompt = copilot_prompt.system_prompt {
+                identity = 'GitHub Copilot',
+                model = 'claude-opus-4.6',
+                tools = {
+                    ReadFile = 'read_file',
+                },
+            }
+            assert.truthy(prompt:find '<securityRequirements>')
+            assert.truthy(prompt:find '<operationalSafety>')
+            assert.truthy(prompt:find '<implementationDiscipline>')
+        end)
     end)
 
     describe('tool-dependent instructions', function()
@@ -321,6 +352,19 @@ describe('copilot system prompt', function()
             assert.falsy(
                 prompt_without:find 'NEVER print out a codeblock with a terminal command'
             )
+        end)
+
+        it('includes ExecutionSubagent instructions when tool is available', function()
+            local prompt_with = copilot_prompt.system_prompt {
+                identity = 'GitHub Copilot',
+                model = 'gpt-5.1',
+                tools = {
+                    ExecutionSubagent = 'execution_subagent',
+                    CoreRunInTerminal = 'cmd',
+                },
+            }
+            assert.truthy(prompt_with:find 'execution_subagent')
+            assert.truthy(prompt_with:find 'run commands and get relevant portions')
         end)
     end)
 
@@ -484,6 +528,20 @@ describe('copilot system prompt', function()
                 },
             }
             assert.truthy(prompt:find 'Do NOT create a new markdown file')
+        end)
+
+        it('includes Claude 4.6 optimized reminder', function()
+            local prompt = copilot_prompt.system_prompt {
+                identity = 'GitHub Copilot',
+                model = 'claude-4.6-sonnet',
+                tools = {
+                    ReplaceString = 'replace_string_in_file',
+                    EditFile = 'insert_edit_into_file',
+                },
+            }
+            assert.truthy(
+                prompt:find 'Do NOT create markdown files to document changes unless requested'
+            )
         end)
 
         it('includes GPT-5.3 Codex reminder', function()
