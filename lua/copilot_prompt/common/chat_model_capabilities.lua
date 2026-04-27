@@ -12,6 +12,23 @@ function M.modelPrefersInstructionsInUserMessage(model)
     return model:find 'claude%-3%.5%-sonnet' ~= nil
 end
 
+--- Returns true if the model belongs to the gpt-5.4 family.
+---@param model string
+---@return boolean
+function M.isGpt54(model)
+    return model:find '^gpt%-5%.4' ~= nil
+end
+
+--- Returns true if the model belongs to the "Family H" (hidden family).
+---@param model string
+---@return boolean
+function M.isHiddenFamilyH(model)
+    -- Family H is detected via hash in VS Code, not via model name prefix.
+    -- We cannot match it by name; the caller should pass a flag in opts if needed.
+    local _ = model
+    return false
+end
+
 --- Model supports apply_patch as an edit tool.
 ---@param model string
 ---@return boolean
@@ -21,6 +38,7 @@ function M.modelSupportsApplyPatch(model)
         or M.isGpt52CodexFamily(model)
         or M.isGpt53Codex(model)
         or M.isGpt52Family(model)
+        or M.isGpt54(model)
 end
 
 --- Model supports replace_string_in_file as an edit tool.
@@ -30,13 +48,14 @@ function M.modelSupportsReplaceString(model)
     return model:lower():find 'gemini' ~= nil
         or model:find 'grok%-code' ~= nil
         or M.modelSupportsMultiReplaceString(model)
+        or M.isMinimaxFamily(model)
 end
 
 --- Model supports multi_replace_string_in_file as an edit tool.
 ---@param model string
 ---@return boolean
 function M.modelSupportsMultiReplaceString(model)
-    return M.isAnthropicFamily(model)
+    return M.isAnthropicFamily(model) or M.isMinimaxFamily(model)
 end
 
 --- The model is capable of using replace_string_in_file exclusively,
@@ -47,6 +66,7 @@ function M.modelCanUseReplaceStringExclusively(model)
     return M.isAnthropicFamily(model)
         or model:find 'grok%-code' ~= nil
         or model:lower():find 'gemini%-3' ~= nil
+        or M.isMinimaxFamily(model)
 end
 
 --- The model is capable of using apply_patch as an edit tool exclusively,

@@ -262,6 +262,61 @@ describe('copilot system prompt', function()
             assert.truthy(prompt:find '<ambition_vs_precision>')
             assert.truthy(prompt:find 'surgical precision')
         end)
+
+        it('uses GPT-5.4 prompt for gpt-5.4', function()
+            local prompt = copilot_prompt.system_prompt {
+                identity = 'GitHub Copilot',
+                model = 'gpt-5.4',
+                tools = {
+                    ApplyPatch = 'apply_patch',
+                    ReadFile = 'read_file',
+                },
+            }
+            assert.truthy(prompt:find '<coding_agent_instructions>')
+            assert.truthy(prompt:find '<personality>')
+            assert.truthy(prompt:find '<formatting_rules>')
+            assert.truthy(prompt:find '<intermediary_updates>')
+        end)
+
+        it('uses Claude 4.6 Opus prompt for claude-opus models', function()
+            local prompt = copilot_prompt.system_prompt {
+                identity = 'GitHub Copilot',
+                model = 'claude-opus-4.6',
+                tools = {
+                    ReadFile = 'read_file',
+                },
+            }
+            assert.truthy(prompt:find '<instructions>')
+            assert.truthy(prompt:find '<securityRequirements>')
+            -- Bounded exploration guidance
+            assert.truthy(prompt:find 'Gather sufficient context')
+        end)
+
+        it('uses Claude 4.6 Sonnet prompt for claude-4.6-sonnet', function()
+            local prompt = copilot_prompt.system_prompt {
+                identity = 'GitHub Copilot',
+                model = 'claude-4.6-sonnet',
+                tools = {
+                    ReadFile = 'read_file',
+                },
+            }
+            assert.truthy(prompt:find '<parallelizationStrategy>')
+            assert.truthy(prompt:find 'batch the reads')
+        end)
+
+        it('includes ExecutionSubagent instructions when tool is available', function()
+            local prompt = copilot_prompt.system_prompt {
+                identity = 'GitHub Copilot',
+                model = 'unknown',
+                tools = {
+                    ExecutionSubagent = 'exec_subagent',
+                    CoreRunInTerminal = 'cmd',
+                    ReadFile = 'read_file',
+                },
+            }
+            assert.truthy(prompt:find 'exec_subagent')
+            assert.truthy(prompt:find 'in rare cases when you want the entire output')
+        end)
     end)
 
     describe('tool-dependent instructions', function()

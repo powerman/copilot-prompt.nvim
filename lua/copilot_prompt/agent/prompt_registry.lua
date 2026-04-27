@@ -56,6 +56,11 @@ function M.resolveCustomizations(opts)
     elseif capabilities.isMinimaxFamily(opts.model) then
         local minimax = require 'copilot_prompt.agent.minimax_prompts'
         systemPromptRenderer, reminderRenderer = minimax.resolve(opts)
+    elseif capabilities.isGpt54(opts.model) then
+        local gpt54 = require 'copilot_prompt.agent.openai.gpt54_prompt'
+        systemPromptRenderer, reminderRenderer = gpt54.resolve(opts)
+        identityRenderer = copilot_identity.GPT5CopilotIdentityRule_render
+        safetyRenderer = safety_rules.Gpt5SafetyRule_render
     elseif capabilities.isGpt52Family(opts.model) then
         local gpt52 = require 'copilot_prompt.agent.openai.gpt52_prompt'
         systemPromptRenderer, reminderRenderer = gpt52.resolve(opts)

@@ -35,6 +35,8 @@
 ---@field FindFiles? string
 --- Delegated search via a sub-agent.
 ---@field SearchSubagent? string
+--- Execution sub-agent for terminal commands.
+---@field ExecutionSubagent? string
 --- Fetch a web page.
 ---@field FetchWebPage? string
 --- Get diagnostics/errors from the editor.

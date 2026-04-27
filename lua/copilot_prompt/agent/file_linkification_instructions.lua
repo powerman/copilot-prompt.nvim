@@ -50,4 +50,22 @@ function M.render()
     )
 end
 
+---@return string
+function M.renderOptimized()
+    return tag(
+        'fileLinkification',
+        table.concat({
+            'When mentioning files or line numbers, use workspace-relative paths and 1-based line numbers. Always wrap file references in backticks.',
+            '',
+            'Formats: `path/file.ts`, `file.ts:10`',
+            '',
+            'Rules:',
+            "- Use '/' only. Strip drive letters and external folders.",
+            'Do not use file:// URIs.',
+            'Only reference files that exist in the workspace.',
+            'Do not use line ranges.',
+        }, '\n')
+    )
+end
+
 return M
