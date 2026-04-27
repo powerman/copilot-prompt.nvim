@@ -143,6 +143,23 @@ function M.isGpt53Codex(model)
     return model:find '^gpt%-5%.3%-codex' ~= nil
 end
 
+--- Matches gpt-5.4 models (GPT-5.4+).
+--- Replaces the old hiddenModelJ detection.
+---@param model string|nil
+---@return boolean
+function M.isGpt54(model)
+    if not model then
+        return false
+    end
+    return model:find '^gpt%-5%.4' ~= nil
+end
+
+---@param model string|nil
+---@return boolean
+function M.isGpt54Family(model)
+    return M.isGpt54(model)
+end
+
 --- Matches grok-code models (xAI).
 ---@param model string
 ---@return boolean

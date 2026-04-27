@@ -53,6 +53,18 @@ function M.filterToolsByModel(opts)
             tools.CoreManageTodoList = nil
         end
     end
+
+    -- Filter ExecutionSubagent: only available for GPT and Anthropic families.
+    if tools.ExecutionSubagent ~= nil then
+        local isGptOrAnthropic = capabilities.isGptFamily(opts.model)
+            or capabilities.isAnthropicFamily(opts.model)
+        if not isGptOrAnthropic then
+            tools.ExecutionSubagent = nil
+        end
+    end
+
+    -- Enable custom tool search tool for Anthropic models (mirrors CUSTOM_TOOL_SEARCH_NAME logic).
+    -- The tool named ToolSearch is already in the tools map if configured; no filtering needed.
 end
 
 return M

@@ -262,6 +262,80 @@ describe('copilot system prompt', function()
             assert.truthy(prompt:find '<ambition_vs_precision>')
             assert.truthy(prompt:find 'surgical precision')
         end)
+
+        it('uses GPT-5.4 prompt for gpt-5.4 models', function()
+            local prompt = copilot_prompt.system_prompt {
+                identity = 'GitHub Copilot',
+                model = 'gpt-5.4',
+                tools = {
+                    ApplyPatch = 'apply_patch',
+                    ReadFile = 'read_file',
+                },
+            }
+            assert.truthy(prompt:find 'deeply pragmatic')
+            assert.truthy(prompt:find 'interaction_style')
+            assert.truthy(prompt:find 'escalation')
+            assert.truthy(prompt:find 'frontend_tasks')
+        end)
+
+        it('uses Sonnet 4.6 prompt for claude-sonnet-4.6', function()
+            local prompt = copilot_prompt.system_prompt {
+                identity = 'GitHub Copilot',
+                model = 'claude-sonnet-4.6',
+                tools = {
+                    ReadFile = 'read_file',
+                },
+            }
+            assert.truthy(prompt:find 'OWASP Top 10')
+            assert.truthy(prompt:find 'bypassing security controls')
+        end)
+
+        it('uses Opus 4.6 prompt for claude-opus-4.6', function()
+            local prompt = copilot_prompt.system_prompt {
+                identity = 'GitHub Copilot',
+                model = 'claude-opus-4.6',
+                tools = {
+                    ReadFile = 'read_file',
+                },
+            }
+            assert.truthy(prompt:find 'Gather sufficient context to act confidently')
+        end)
+    end)
+
+    describe('ExecutionSubagent tool', function()
+        it('includes ExecutionSubagent instructions when tool is available', function()
+            local prompt = copilot_prompt.system_prompt {
+                identity = 'GitHub Copilot',
+                model = 'gpt-4.1',
+                tools = {
+                    ExecutionSubagent = 'run_command',
+                    CoreRunInTerminal = 'cmd',
+                    ReadFile = 'read_file',
+                },
+            }
+            assert.truthy(prompt:find 'run_command')
+        end)
+
+        it(
+            'does not include ExecutionSubagent instructions for non-GPT/Anthropic models',
+            function()
+                -- Gemini model should not have ExecutionSubagent (filtered by agent_intent)
+                -- Actually agent_intent only filters when the tool IS present; let's verify
+                -- the generic prompt doesn't add ExecutionSubagent instructions for unknown models
+                -- by checking the tool name isn't mentioned
+                local prompt = copilot_prompt.system_prompt {
+                    identity = 'GitHub Copilot',
+                    model = 'gemini-2.5-pro',
+                    tools = {
+                        ExecutionSubagent = 'run_cmd',
+                        CoreRunInTerminal = 'cmd',
+                        ReadFile = 'read_file',
+                    },
+                }
+                -- ExecutionSubagent should NOT be in the prompt since Gemini is not GPT/Anthropic
+                assert.falsy(prompt:find 'run_cmd')
+            end
+        )
     end)
 
     describe('tool-dependent instructions', function()

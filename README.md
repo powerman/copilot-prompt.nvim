@@ -15,7 +15,7 @@ or any other Neovim AI chat plugin.
 
 The prompt generation logic was ported from
 [microsoft/vscode-copilot-chat](https://github.com/microsoft/vscode-copilot-chat)
-version **v0.39.2026030602**.<br/>
+version **v0.43.2026040705**.<br/>
 See [LICENSE.copilot](LICENSE.copilot) (MIT) for the original copyright notice.
 
 ## Features
@@ -36,23 +36,26 @@ See [LICENSE.copilot](LICENSE.copilot) (MIT) for the original copyright notice.
 
 The plugin automatically selects the best prompt variant for the given model:
 
-| Model pattern                              | Prompt variant        |
-| ------------------------------------------ | --------------------- |
-| `claude-sonnet-4`, `claude-sonnet-4-*`     | Anthropic (legacy)    |
-| `claude-*4.5*`, `claude-*4-5*`             | Anthropic Claude 4.5  |
-| other `claude-*`                           | Anthropic Claude 4.6+ |
-| `gemini-*`                                 | Gemini                |
-| `minimax-*`                                | Minimax               |
-| `gpt-5.3-codex*`                           | GPT-5.3 Codex         |
-| `gpt-5.1-codex*`, `gpt-5.2-codex*`         | GPT-5.1 Codex         |
-| `gpt-5-codex*`                             | GPT-5 Codex           |
-| `gpt-5.2*`                                 | GPT-5.2               |
-| `gpt-5.1*`                                 | GPT-5.1               |
-| `gpt-5*`                                   | GPT-5                 |
-| `gpt-4*`, `o3-mini*`, `o4-mini`, `OpenAI*` | Default OpenAI        |
-| `grok-*`                                   | xAI                   |
-| `glm-*`                                    | ZAI                   |
-| anything else                              | Generic fallback      |
+| Model pattern                              | Prompt variant             |
+| ------------------------------------------ | -------------------------- |
+| `claude-sonnet-4`, `claude-sonnet-4-*`     | Anthropic (legacy)         |
+| `claude-*4.5*`, `claude-*4-5*`             | Anthropic Claude 4.5       |
+| `claude-sonnet-*` (other)                  | Anthropic Claude 4.6 Sonnet|
+| `claude-opus-*`                            | Anthropic Claude 4.6 Opus  |
+| other `claude-*`                           | Anthropic Claude 4.6 Sonnet|
+| `gemini-*`                                 | Gemini                     |
+| `minimax-*`                                | Minimax                    |
+| `gpt-5.4*`                                 | GPT-5.4                    |
+| `gpt-5.3-codex*`                           | GPT-5.3 Codex              |
+| `gpt-5.1-codex*`, `gpt-5.2-codex*`         | GPT-5.1 Codex              |
+| `gpt-5-codex*`                             | GPT-5 Codex                |
+| `gpt-5.2*`                                 | GPT-5.2                    |
+| `gpt-5.1*`                                 | GPT-5.1                    |
+| `gpt-5*`                                   | GPT-5                      |
+| `gpt-4*`, `o3-mini*`, `o4-mini`, `OpenAI*` | Default OpenAI             |
+| `grok-*`                                   | xAI                        |
+| `glm-*`                                    | ZAI                        |
+| anything else                              | Generic fallback           |
 
 ## Installation
 
@@ -172,6 +175,7 @@ require('copilot_prompt').system_prompt {
         FindTextInFiles = nil, -- Grep/text search in files.
         FindFiles = nil, -- Find files by name/glob.
         SearchSubagent = nil, -- Delegated search via a sub-agent.
+        ExecutionSubagent = nil, -- Delegated execution via a sub-agent.
         FetchWebPage = nil, -- Fetch a web page.
         GetErrors = nil, -- Get diagnostics/errors from the editor.
         ToolSearch = nil, -- Tool search (Anthropic deferred tools).

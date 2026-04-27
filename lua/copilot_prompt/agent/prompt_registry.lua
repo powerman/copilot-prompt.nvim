@@ -24,7 +24,13 @@ function M.resolveCustomizations(opts)
 
     -- Check model family in priority order matching PromptRegistry resolution.
     -- Codex models are checked first because they overlap with gpt-5* families.
-    if capabilities.isGpt53Codex(opts.model) then
+    -- GPT-5.4 is checked before other gpt-5* families because it has its own prompt.
+    if capabilities.isGpt54(opts.model) then
+        local gpt54 = require 'copilot_prompt.agent.openai.gpt54_prompt'
+        systemPromptRenderer, reminderRenderer = gpt54.resolve(opts)
+        identityRenderer = copilot_identity.GPT5CopilotIdentityRule_render
+        safetyRenderer = safety_rules.Gpt5SafetyRule_render
+    elseif capabilities.isGpt53Codex(opts.model) then
         local gpt53_codex = require 'copilot_prompt.agent.openai.gpt53_codex_prompt'
         systemPromptRenderer, reminderRenderer = gpt53_codex.resolve(opts)
         identityRenderer = copilot_identity.GPT5CopilotIdentityRule_render

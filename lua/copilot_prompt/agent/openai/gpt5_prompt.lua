@@ -145,6 +145,18 @@ function M.DefaultGpt5AgentPrompt_render(opts)
                     .. '.'
             )
         end
+        if tools.ExecutionSubagent then
+            table.insert(
+                execLines,
+                'For most execution tasks and terminal commands, use '
+                    .. tn(tools, 'ExecutionSubagent')
+                    .. ' to run commands and get relevant portions of the output instead of using '
+                    .. tn(tools, 'CoreRunInTerminal')
+                    .. '. Use '
+                    .. tn(tools, 'CoreRunInTerminal')
+                    .. ' in rare cases when you want the entire output of a single command without truncation.'
+            )
+        end
         table.insert(execLines, '')
         table.insert(
             execLines,
@@ -191,6 +203,18 @@ function M.DefaultGpt5AgentPrompt_render(opts)
             }, '\n')
         )
     )
+
+    if tools.ExecutionSubagent then
+        table.insert(
+            parts,
+            tag(
+                'toolUseInstructions',
+                "Don't call "
+                    .. tn(tools, 'ExecutionSubagent')
+                    .. ' multiple times in parallel. Instead, invoke one subagent and wait for its response before running the next command.'
+            )
+        )
+    end
 
     if tools.ApplyPatch then
         table.insert(parts, dai.ApplyPatchInstructions_render(opts, tools))
