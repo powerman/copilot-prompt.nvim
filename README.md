@@ -15,7 +15,7 @@ or any other Neovim AI chat plugin.
 
 The prompt generation logic was ported from
 [microsoft/vscode-copilot-chat](https://github.com/microsoft/vscode-copilot-chat)
-version **v0.39.2026030602**.<br/>
+version **v0.43.2026040705**.<br/>
 See [LICENSE.copilot](LICENSE.copilot) (MIT) for the original copyright notice.
 
 ## Features
@@ -43,6 +43,7 @@ The plugin automatically selects the best prompt variant for the given model:
 | other `claude-*`                           | Anthropic Claude 4.6+ |
 | `gemini-*`                                 | Gemini                |
 | `minimax-*`                                | Minimax               |
+| `gpt-5.4*`                                 | GPT-5.4               |
 | `gpt-5.3-codex*`                           | GPT-5.3 Codex         |
 | `gpt-5.1-codex*`, `gpt-5.2-codex*`         | GPT-5.1 Codex         |
 | `gpt-5-codex*`                             | GPT-5 Codex           |
@@ -165,6 +166,7 @@ require('copilot_prompt').system_prompt {
         ReadFile = nil, -- Read file contents.
         CreateFile = nil, -- Create a new file.
         CoreRunInTerminal = nil, -- Run a command in a terminal.
+        ExecutionSubagent = nil, -- Delegated execution via a sub-agent.
         CoreRunTest = nil, -- Run tests.
         CoreRunTask = nil, -- Run a project task.
         CoreManageTodoList = nil, -- Manage a todo/task list.

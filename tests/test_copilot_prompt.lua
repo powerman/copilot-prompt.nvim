@@ -262,6 +262,21 @@ describe('copilot system prompt', function()
             assert.truthy(prompt:find '<ambition_vs_precision>')
             assert.truthy(prompt:find 'surgical precision')
         end)
+
+        it('uses GPT-5.4 prompt for gpt-5.4 models', function()
+            local prompt = copilot_prompt.system_prompt {
+                identity = 'GitHub Copilot',
+                model = 'gpt-5.4',
+                tools = {
+                    ApplyPatch = 'apply_patch',
+                    ReadFile = 'read_file',
+                },
+            }
+            assert.truthy(prompt:find '<coding_agent_instructions>')
+            assert.truthy(prompt:find '<personality>')
+            assert.truthy(prompt:find '<values>')
+            assert.truthy(prompt:find 'deeply pragmatic')
+        end)
     end)
 
     describe('tool-dependent instructions', function()
@@ -322,6 +337,35 @@ describe('copilot system prompt', function()
                 prompt_without:find 'NEVER print out a codeblock with a terminal command'
             )
         end)
+
+        it('includes ExecutionSubagent instructions when tool is available', function()
+            local prompt = copilot_prompt.system_prompt {
+                identity = 'GitHub Copilot',
+                model = 'claude-sonnet-4',
+                tools = {
+                    ExecutionSubagent = 'exec_subagent',
+                    CoreRunInTerminal = 'cmd',
+                },
+            }
+            assert.truthy(prompt:find 'exec_subagent')
+            assert.truthy(prompt:find 'For most execution tasks')
+        end)
+
+        it(
+            'does not include ExecutionSubagent instructions for non-GPT/Anthropic models',
+            function()
+                local prompt = copilot_prompt.system_prompt {
+                    identity = 'GitHub Copilot',
+                    model = 'gemini-2.5-pro',
+                    tools = {
+                        ExecutionSubagent = 'exec_subagent',
+                        CoreRunInTerminal = 'cmd',
+                    },
+                }
+                -- ExecutionSubagent should be filtered out for Gemini
+                assert.falsy(prompt:find 'exec_subagent')
+            end
+        )
     end)
 
     describe('tool filtering by model', function()

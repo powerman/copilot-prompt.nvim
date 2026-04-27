@@ -53,6 +53,15 @@ function M.filterToolsByModel(opts)
             tools.CoreManageTodoList = nil
         end
     end
+
+    -- ExecutionSubagent is available for GPT and Anthropic families.
+    local isGptOrAnthropic = capabilities.isGptFamily(opts.model)
+        or capabilities.isAnthropicFamily(opts.model)
+    if not isGptOrAnthropic then
+        if tools.ExecutionSubagent ~= nil then
+            tools.ExecutionSubagent = nil
+        end
+    end
 end
 
 return M

@@ -21,6 +21,8 @@
 ---@field CreateFile? string
 --- Run a command in a terminal.
 ---@field CoreRunInTerminal? string
+--- Delegated execution via a sub-agent.
+---@field ExecutionSubagent? string
 --- Run tests.
 ---@field CoreRunTest? string
 --- Run a project task.
