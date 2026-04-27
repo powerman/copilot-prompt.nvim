@@ -95,10 +95,10 @@ describe('copilot system prompt', function()
             assert.truthy(prompt:find 'communicationStyle')
         end)
 
-        it('uses Claude 4.6 prompt for newer claude models', function()
+        it('uses Claude 4.6 Sonnet prompt for newer claude sonnet models', function()
             local prompt = copilot_prompt.system_prompt {
                 identity = 'GitHub Copilot',
-                model = 'claude-4.6-sonnet',
+                model = 'claude-sonnet-4.6',
                 tools = {
                     ReadFile = 'read_file',
                 },
@@ -106,6 +106,39 @@ describe('copilot system prompt', function()
             assert.truthy(prompt:find 'securityRequirements')
             assert.truthy(prompt:find 'operationalSafety')
             assert.truthy(prompt:find 'implementationDiscipline')
+            -- Sonnet variant has "two failed attempts" exploration guidance
+            assert.truthy(prompt:find 'two failed attempts')
+        end)
+
+        it('uses Claude 4.6 Opus prompt for claude-opus models', function()
+            local prompt = copilot_prompt.system_prompt {
+                identity = 'GitHub Copilot',
+                model = 'claude-opus-4.6',
+                tools = {
+                    ReadFile = 'read_file',
+                },
+            }
+            assert.truthy(prompt:find 'securityRequirements')
+            -- Opus variant uses bounded exploration guidance
+            assert.truthy(prompt:find 'Avoid redundant searches')
+            -- Opus variant does NOT include the Sonnet-specific "two failed attempts" text
+            assert.falsy(prompt:find 'two failed attempts')
+        end)
+
+        it('uses GPT-5.4 prompt for gpt-5.4', function()
+            local prompt = copilot_prompt.system_prompt {
+                identity = 'GitHub Copilot',
+                model = 'gpt-5.4',
+                tools = {
+                    ApplyPatch = 'apply_patch',
+                    ReadFile = 'read_file',
+                },
+            }
+            -- Gpt54 prompt has unique values/escalation/intermediary_updates tags.
+            assert.truthy(prompt:find '<values>')
+            assert.truthy(prompt:find '<escalation>')
+            assert.truthy(prompt:find '<intermediary_updates>')
+            assert.truthy(prompt:find '<frontend_tasks>')
         end)
 
         it('uses Gemini prompt for gemini models', function()
@@ -264,6 +297,47 @@ describe('copilot system prompt', function()
         end)
     end)
 
+    describe('ExecutionSubagent tool support', function()
+        it('mentions ExecutionSubagent in default prompt when available', function()
+            local prompt = copilot_prompt.system_prompt {
+                identity = 'GitHub Copilot',
+                model = 'unknown',
+                tools = {
+                    CoreRunInTerminal = 'cmd',
+                    ExecutionSubagent = 'exec_subagent',
+                },
+            }
+            assert.truthy(prompt:find 'exec_subagent')
+            assert.truthy(prompt:find 'invoke one subagent and wait')
+        end)
+
+        it('mentions ExecutionSubagent in Claude 4.6 Sonnet prompt', function()
+            local prompt = copilot_prompt.system_prompt {
+                identity = 'GitHub Copilot',
+                model = 'claude-sonnet-4.6',
+                tools = {
+                    CoreRunInTerminal = 'cmd',
+                    ExecutionSubagent = 'exec_subagent',
+                },
+            }
+            assert.truthy(prompt:find 'exec_subagent')
+        end)
+
+        it('mentions ExecutionSubagent in gpt-5 prompt', function()
+            local prompt = copilot_prompt.system_prompt {
+                identity = 'GitHub Copilot',
+                model = 'gpt-5',
+                tools = {
+                    ApplyPatch = 'apply_patch',
+                    CoreRunInTerminal = 'cmd',
+                    ExecutionSubagent = 'exec_subagent',
+                },
+            }
+            assert.truthy(prompt:find 'exec_subagent')
+            assert.truthy(prompt:find 'invoke one subagent and wait')
+        end)
+    end)
+
     describe('tool-dependent instructions', function()
         it('includes ApplyPatch instructions when tool is available', function()
             local prompt = copilot_prompt.system_prompt {
@@ -355,6 +429,23 @@ describe('copilot system prompt', function()
             }
             local prompt = copilot_prompt.system_prompt(opts)
             -- Anthropic supports multi replace string
+            assert.truthy(prompt:find 'multi_replace_string_in_file')
+        end)
+
+        it('enables ReplaceString and MultiReplaceString for Minimax models', function()
+            local opts = {
+                identity = 'GitHub Copilot',
+                model = 'minimax-01',
+                tools = {
+                    EditFile = 'insert_edit_into_file',
+                    ReplaceString = 'replace_string_in_file',
+                    MultiReplaceString = 'multi_replace_string_in_file',
+                    ReadFile = 'read_file',
+                },
+            }
+            local prompt = copilot_prompt.system_prompt(opts)
+            -- Minimax now supports replace_string and multi_replace_string
+            assert.truthy(prompt:find 'replace_string_in_file')
             assert.truthy(prompt:find 'multi_replace_string_in_file')
         end)
     end)

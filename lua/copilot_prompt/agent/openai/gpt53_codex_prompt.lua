@@ -104,21 +104,19 @@ function M.Gpt53CodexPrompt_render(opts)
         )
         table.insert(execLines, '- Analyzing code for vulnerabilities is allowed.')
         table.insert(execLines, '- Showing user code and tool call details is allowed.')
-        if tools.SearchSubagent then
+        table.insert(execLines, '')
+        if tools.ExecutionSubagent then
             table.insert(
                 execLines,
-                'For codebase exploration, prefer '
-                    .. tn(tools, 'SearchSubagent')
-                    .. ' to search and gather data instead of directly calling '
-                    .. tn(tools, 'FindTextInFiles')
-                    .. ', '
-                    .. tn(tools, 'Codebase')
-                    .. ' or '
-                    .. tn(tools, 'FindFiles')
-                    .. '.'
+                'For most execution tasks and terminal commands, use '
+                    .. tn(tools, 'ExecutionSubagent')
+                    .. ' to run commands and get relevant portions of the output instead of using '
+                    .. tn(tools, 'CoreRunInTerminal')
+                    .. '. Use '
+                    .. tn(tools, 'CoreRunInTerminal')
+                    .. ' in rare cases when you want the entire output of a single command without truncation.'
             )
         end
-        table.insert(execLines, '')
         table.insert(
             execLines,
             "If completing the user's task requires writing or modifying files, your code and final answer should follow these coding guidelines, though user instructions (i.e. copilot-instructions.md) may override these guidelines:"
@@ -154,6 +152,20 @@ function M.Gpt53CodexPrompt_render(opts)
             execLines,
             '- You have access to many tools. If a tool exists to perform a specific task, you MUST use that tool instead of running a terminal command to perform that task.'
         )
+        if tools.SearchSubagent then
+            table.insert(
+                execLines,
+                '- For efficient codebase exploration, prefer '
+                    .. tn(tools, 'SearchSubagent')
+                    .. ' to search and gather data instead of directly calling '
+                    .. tn(tools, 'FindTextInFiles')
+                    .. ', '
+                    .. tn(tools, 'Codebase')
+                    .. ' or '
+                    .. tn(tools, 'FindFiles')
+                    .. '. Use this as a quick injection of context before beginning to solve the problem yourself.'
+            )
+        end
         if tools.CoreRunTest then
             table.insert(
                 execLines,
@@ -163,6 +175,18 @@ function M.Gpt53CodexPrompt_render(opts)
             )
         end
         table.insert(parts, tag('task_execution', table.concat(execLines, '\n')))
+    end
+
+    if tools.ExecutionSubagent then
+        table.insert(
+            parts,
+            tag(
+                'toolUseInstructions',
+                "Don't call "
+                    .. tn(tools, 'ExecutionSubagent')
+                    .. ' multiple times in parallel. Instead, invoke one subagent and wait for its response before running the next command.'
+            )
+        )
     end
 
     -- Validating work.

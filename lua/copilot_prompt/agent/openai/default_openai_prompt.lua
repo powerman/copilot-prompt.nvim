@@ -49,6 +49,18 @@ function M.DefaultOpenAIAgentPrompt_render(opts)
                     .. '.'
             )
         end
+        if tools.ExecutionSubagent then
+            table.insert(
+                lines,
+                'For most execution tasks and terminal commands, use '
+                    .. tn(tools, 'ExecutionSubagent')
+                    .. ' to run commands and get relevant portions of the output instead of using '
+                    .. tn(tools, 'CoreRunInTerminal')
+                    .. '. Use '
+                    .. tn(tools, 'CoreRunInTerminal')
+                    .. ' in rare cases when you want the entire output of a single command without truncation.'
+            )
+        end
         table.insert(
             lines,
             'You will be given some context and attachments along with the user prompt. You can use them if they are relevant to the task, and ignore them if not.'

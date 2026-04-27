@@ -385,6 +385,18 @@ local function buildInstructionsTag(opts, tools)
                 .. '.'
         )
     end
+    if tools.ExecutionSubagent then
+        table.insert(
+            lines,
+            'For most execution tasks and terminal commands, use '
+                .. tn(tools, 'ExecutionSubagent')
+                .. ' to run commands and get relevant portions of the output instead of using '
+                .. tn(tools, 'CoreRunInTerminal')
+                .. '. Use '
+                .. tn(tools, 'CoreRunInTerminal')
+                .. ' in rare cases when you want the entire output of a single command without truncation.'
+        )
+    end
     table.insert(
         lines,
         'You will be given some context and attachments along with the user prompt. You can use them if they are relevant to the task, and ignore them if not.'
@@ -425,10 +437,13 @@ local function buildInstructionsTag(opts, tools)
         )
     end
     if tools.CoreRunInTerminal then
+        local terminalTool = tools.ExecutionSubagent
+                and (tn(tools, 'ExecutionSubagent') .. ' or ' .. tn(tools, 'CoreRunInTerminal'))
+            or tn(tools, 'CoreRunInTerminal')
         table.insert(
             lines,
             'NEVER print out a codeblock with a terminal command to run unless the user asked for it. Use the '
-                .. tn(tools, 'CoreRunInTerminal')
+                .. terminalTool
                 .. ' tool instead.'
         )
     end
@@ -469,6 +484,18 @@ local function buildToolUseInstructionsTag(_, tools)
                 .. ' or '
                 .. tn(tools, 'FindFiles')
                 .. '.'
+        )
+    end
+    if tools.ExecutionSubagent then
+        table.insert(
+            lines,
+            'For most execution tasks and terminal commands, use '
+                .. tn(tools, 'ExecutionSubagent')
+                .. ' to run commands and get relevant portions of the output instead of using '
+                .. tn(tools, 'CoreRunInTerminal')
+                .. '. Use '
+                .. tn(tools, 'CoreRunInTerminal')
+                .. ' in rare cases when you want the entire output of a single command without truncation.'
         )
     end
     local parallel =
@@ -513,12 +540,30 @@ local function buildToolUseInstructionsTag(_, tools)
                 .. ' to do a semantic search across the workspace.'
         )
     end
+    if tools.ExecutionSubagent then
+        table.insert(
+            lines,
+            'For most terminal commands, use '
+                .. tn(tools, 'ExecutionSubagent')
+                .. ' to run commands and get relevant portions of the output instead of using '
+                .. tn(tools, 'CoreRunInTerminal')
+                .. '. This helps avoid output truncation for commands with very verbose output.'
+        )
+    end
     if tools.CoreRunInTerminal then
         table.insert(
             lines,
             "Don't call the "
                 .. tn(tools, 'CoreRunInTerminal')
                 .. ' tool multiple times in parallel. Instead, run one command and wait for the output before running the next command.'
+        )
+    end
+    if tools.ExecutionSubagent then
+        table.insert(
+            lines,
+            "Don't call "
+                .. tn(tools, 'ExecutionSubagent')
+                .. ' multiple times in parallel. Instead, invoke one subagent and wait for its response before running the next command.'
         )
     end
     table.insert(
