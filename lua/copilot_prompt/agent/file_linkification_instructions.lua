@@ -50,4 +50,27 @@ function M.render()
     )
 end
 
+--- FileLinkificationInstructionsOptimized — condensed variant for Claude 4.6 optimized prompts.
+--- Neovim-compatible: uses backticks instead of markdown links.
+---@return string
+function M.renderOptimized()
+    return tag(
+        'fileLinkification',
+        table.concat({
+            'Convert file references to backtick-wrapped workspace-relative paths with 1-based line numbers. NEVER use markdown links for file references.',
+            '',
+            'Formats: `path/file.ts`, `path/file.ts:10`',
+            '',
+            'Rules:',
+            "- Use '/' only. Strip drive letters and external folders",
+            '- Do not use file:// or vscode:// schemes',
+            '- Do not use line ranges like :10-12 or fragment syntax #L10',
+            '- Non-contiguous lines require separate references',
+            '- Only reference files that exist in the workspace',
+            '',
+            'FORBIDDEN: markdown links [file.ts](file.ts#L10), plain text file names without backticks, line citations without backticks ("Line 86"), combining multiple line references in one backtick block.',
+        }, '\n')
+    )
+end
+
 return M

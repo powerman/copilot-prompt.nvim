@@ -47,6 +47,13 @@ function M.filterToolsByModel(opts)
         tools.MultiReplaceString = nil
     end
 
+    -- ExecutionSubagent: enabled for GPT or Anthropic families.
+    local isGptOrAnthropic = capabilities.isGptFamily(opts.model)
+        or capabilities.isAnthropicFamily(opts.model)
+    if tools.ExecutionSubagent ~= nil and not isGptOrAnthropic then
+        tools.ExecutionSubagent = nil
+    end
+
     -- Grok-code models don't support todo list.
     if opts.model:find 'grok%-code' then
         if tools.CoreManageTodoList ~= nil then

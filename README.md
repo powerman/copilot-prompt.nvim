@@ -15,7 +15,7 @@ or any other Neovim AI chat plugin.
 
 The prompt generation logic was ported from
 [microsoft/vscode-copilot-chat](https://github.com/microsoft/vscode-copilot-chat)
-version **v0.39.2026030602**.<br/>
+version **v0.43.2026040705**.<br/>
 See [LICENSE.copilot](LICENSE.copilot) (MIT) for the original copyright notice.
 
 ## Features
@@ -40,9 +40,11 @@ The plugin automatically selects the best prompt variant for the given model:
 | ------------------------------------------ | --------------------- |
 | `claude-sonnet-4`, `claude-sonnet-4-*`     | Anthropic (legacy)    |
 | `claude-*4.5*`, `claude-*4-5*`             | Anthropic Claude 4.5  |
-| other `claude-*`                           | Anthropic Claude 4.6+ |
+| `claude-opus-*`                            | Anthropic Claude 4.6 Opus |
+| other `claude-*`                           | Anthropic Claude 4.6 Sonnet |
 | `gemini-*`                                 | Gemini                |
 | `minimax-*`                                | Minimax               |
+| `gpt-5.4*`                                 | GPT-5.4               |
 | `gpt-5.3-codex*`                           | GPT-5.3 Codex         |
 | `gpt-5.1-codex*`, `gpt-5.2-codex*`         | GPT-5.1 Codex         |
 | `gpt-5-codex*`                             | GPT-5 Codex           |
@@ -172,6 +174,7 @@ require('copilot_prompt').system_prompt {
         FindTextInFiles = nil, -- Grep/text search in files.
         FindFiles = nil, -- Find files by name/glob.
         SearchSubagent = nil, -- Delegated search via a sub-agent.
+        ExecutionSubagent = nil, -- Execution via a sub-agent (terminal commands with truncated output).
         FetchWebPage = nil, -- Fetch a web page.
         GetErrors = nil, -- Get diagnostics/errors from the editor.
         ToolSearch = nil, -- Tool search (Anthropic deferred tools).
