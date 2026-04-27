@@ -29,6 +29,11 @@ function M.resolveCustomizations(opts)
         systemPromptRenderer, reminderRenderer = gpt53_codex.resolve(opts)
         identityRenderer = copilot_identity.GPT5CopilotIdentityRule_render
         safetyRenderer = safety_rules.Gpt5SafetyRule_render
+    elseif capabilities.isGpt54(opts.model) then
+        local gpt54 = require 'copilot_prompt.agent.openai.gpt54_prompt'
+        systemPromptRenderer, reminderRenderer = gpt54.resolve(opts)
+        identityRenderer = copilot_identity.GPT5CopilotIdentityRule_render
+        safetyRenderer = safety_rules.Gpt5SafetyRule_render
     elseif
         capabilities.isGpt52CodexFamily(opts.model)
         or capabilities.isGpt51CodexFamily(opts.model)

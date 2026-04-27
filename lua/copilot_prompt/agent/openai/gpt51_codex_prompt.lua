@@ -68,6 +68,20 @@ function M.Gpt51CodexPrompt_render(opts)
             lines,
             '- You have access to many tools. If a tool exists to perform a specific task, you MUST use that tool instead of running a terminal command to perform that task.'
         )
+        if tools.SearchSubagent then
+            table.insert(
+                lines,
+                '- For efficient codebase exploration, prefer '
+                    .. tn(tools, 'SearchSubagent')
+                    .. ' to search and gather data instead of directly calling '
+                    .. tn(tools, 'FindTextInFiles')
+                    .. ', '
+                    .. tn(tools, 'Codebase')
+                    .. ' or '
+                    .. tn(tools, 'FindFiles')
+                    .. '. Use this as a quick injection of context before beginning to solve the problem yourself.'
+            )
+        end
         if tools.CoreRunTest then
             table.insert(
                 lines,

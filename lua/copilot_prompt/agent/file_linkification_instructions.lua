@@ -50,4 +50,25 @@ function M.render()
     )
 end
 
+---@return string
+function M.renderOptimized()
+    return tag(
+        'fileLinkification',
+        table.concat({
+            'Convert file references to backtick-wrapped paths using workspace-relative paths and 1-based line numbers. NEVER use markdown links.',
+            '',
+            'Formats: `path/file.ts`, `file.ts:10`',
+            '',
+            'Rules:',
+            '- Use backticks for all file references',
+            "- Use '/' as separator. Strip drive letters and external folders",
+            '- Do not use file://, vscode://, or #L fragment syntax',
+            '- Non-contiguous lines require separate references, never combine like `file.ts:10-12` or `file.ts:10,20`',
+            '- Only reference files that exist in the workspace',
+            '',
+            'FORBIDDEN: markdown links ([file.ts](...)), plain text file names without backticks, line citations without backticks ("Line 86"), combining multiple line references in one reference.',
+        }, '\n')
+    )
+end
+
 return M

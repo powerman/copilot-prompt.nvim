@@ -108,6 +108,18 @@ describe('copilot system prompt', function()
             assert.truthy(prompt:find 'implementationDiscipline')
         end)
 
+        it('uses Claude 4.6 Opus prompt for claude-opus models', function()
+            local prompt = copilot_prompt.system_prompt {
+                identity = 'GitHub Copilot',
+                model = 'claude-opus-4.6',
+                tools = {
+                    ReadFile = 'read_file',
+                },
+            }
+            assert.truthy(prompt:find 'securityRequirements')
+            assert.truthy(prompt:find 'over%-explore')
+        end)
+
         it('uses Gemini prompt for gemini models', function()
             local prompt = copilot_prompt.system_prompt {
                 identity = 'GitHub Copilot',
@@ -262,6 +274,21 @@ describe('copilot system prompt', function()
             assert.truthy(prompt:find '<ambition_vs_precision>')
             assert.truthy(prompt:find 'surgical precision')
         end)
+
+        it('uses GPT-5.4 prompt for gpt-5.4 models', function()
+            local prompt = copilot_prompt.system_prompt {
+                identity = 'GitHub Copilot',
+                model = 'gpt-5.4',
+                tools = {
+                    ApplyPatch = 'apply_patch',
+                    ReadFile = 'read_file',
+                },
+            }
+            assert.truthy(prompt:find 'coding_agent_instructions')
+            assert.truthy(prompt:find 'coding agent running in Neovim')
+            assert.truthy(prompt:find 'interaction_style')
+            assert.truthy(prompt:find 'frontend_tasks')
+        end)
     end)
 
     describe('tool-dependent instructions', function()
@@ -321,6 +348,32 @@ describe('copilot system prompt', function()
             assert.falsy(
                 prompt_without:find 'NEVER print out a codeblock with a terminal command'
             )
+        end)
+
+        it('includes ExecutionSubagent instructions when tool is available', function()
+            local prompt = copilot_prompt.system_prompt {
+                identity = 'GitHub Copilot',
+                model = 'gpt-5.1',
+                tools = {
+                    ApplyPatch = 'apply_patch',
+                    CoreRunInTerminal = 'cmd',
+                    ExecutionSubagent = 'exec_sub',
+                },
+            }
+            assert.truthy(prompt:find 'exec_sub')
+            assert.truthy(prompt:find "Don't call exec_sub multiple times in parallel")
+        end)
+
+        it('does not include ExecutionSubagent for non-GPT/Anthropic models', function()
+            local prompt = copilot_prompt.system_prompt {
+                identity = 'GitHub Copilot',
+                model = 'gemini-2.5-pro',
+                tools = {
+                    ExecutionSubagent = 'exec_sub',
+                    ReadFile = 'read_file',
+                },
+            }
+            assert.falsy(prompt:find 'exec_sub')
         end)
     end)
 
@@ -496,6 +549,29 @@ describe('copilot system prompt', function()
             }
             assert.truthy(prompt:find 'Tool batches')
             assert.truthy(prompt:find 'Progress cadence')
+        end)
+
+        it('includes GPT-5.4 reminder', function()
+            local prompt = copilot_prompt.system_prompt {
+                identity = 'GitHub Copilot',
+                model = 'gpt-5.4',
+                tools = {
+                    ApplyPatch = 'apply_patch',
+                },
+            }
+            assert.truthy(prompt:find 'Tool batches')
+            assert.truthy(prompt:find 'Progress cadence')
+        end)
+
+        it('includes Anthropic optimized reminder for Claude 4.6+', function()
+            local prompt = copilot_prompt.system_prompt {
+                identity = 'GitHub Copilot',
+                model = 'claude-sonnet-4.6',
+                tools = {
+                    ReplaceString = 'replace_string_in_file',
+                },
+            }
+            assert.truthy(prompt:find '3%-5 lines of unchanged context')
         end)
     end)
 
