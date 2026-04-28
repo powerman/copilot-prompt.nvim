@@ -36,26 +36,26 @@ See [LICENSE.copilot](LICENSE.copilot) (MIT) for the original copyright notice.
 
 The plugin automatically selects the best prompt variant for the given model:
 
-| Model pattern                              | Prompt variant        |
-| ------------------------------------------ | --------------------- |
-| `claude-sonnet-4`, `claude-sonnet-4-*`     | Anthropic (legacy)    |
-| `claude-*4.5*`, `claude-*4-5*`             | Anthropic Claude 4.5  |
-| `claude-opus-*`                            | Anthropic Claude 4.6+ Opus |
+| Model pattern                              | Prompt variant               |
+| ------------------------------------------ | ---------------------------- |
+| `claude-sonnet-4`, `claude-sonnet-4-*`     | Anthropic (legacy)           |
+| `claude-*4.5*`, `claude-*4-5*`             | Anthropic Claude 4.5         |
+| `claude-opus-*`                            | Anthropic Claude 4.6+ Opus   |
 | other `claude-*`                           | Anthropic Claude 4.6+ Sonnet |
-| `gemini-*`                                 | Gemini                |
-| `minimax-*`                                | Minimax               |
-| `gpt-5.4*`                                 | GPT-5.4               |
-| `gpt-5.3-codex*`                           | GPT-5.3 Codex         |
-| `gpt-5.2-codex*`                           | GPT-5.2 Codex         |
-| `gpt-5.1-codex*`                           | GPT-5.1 Codex         |
-| `gpt-5-codex*`                             | GPT-5 Codex           |
-| `gpt-5.2*`                                 | GPT-5.2               |
-| `gpt-5.1*`                                 | GPT-5.1               |
-| `gpt-5*`                                   | GPT-5                 |
-| `gpt-4*`, `o3-mini*`, `o4-mini`, `OpenAI*` | Default OpenAI        |
-| `grok-*`                                   | xAI                   |
-| `glm-*`                                    | ZAI                   |
-| anything else                              | Generic fallback      |
+| `gemini-*`                                 | Gemini                       |
+| `minimax-*`                                | Minimax                      |
+| `gpt-5.4*`                                 | GPT-5.4                      |
+| `gpt-5.3-codex*`                           | GPT-5.3 Codex                |
+| `gpt-5.2-codex*`                           | GPT-5.2 Codex                |
+| `gpt-5.1-codex*`                           | GPT-5.1 Codex                |
+| `gpt-5-codex*`                             | GPT-5 Codex                  |
+| `gpt-5.2*`                                 | GPT-5.2                      |
+| `gpt-5.1*`                                 | GPT-5.1                      |
+| `gpt-5*`                                   | GPT-5                        |
+| `gpt-4*`, `o3-mini*`, `o4-mini`, `OpenAI*` | Default OpenAI               |
+| `grok-*`                                   | xAI                          |
+| `glm-*`                                    | ZAI                          |
+| anything else                              | Generic fallback             |
 
 ## Installation
 
@@ -254,6 +254,7 @@ local function make_tools(available)
         FindTextInFiles = first 'grep_search',
         FindFiles = first('filesystem__search_files', 'file_search', 'neovim__find_files'),
         SearchSubagent = nil, -- No such tool in CodeCompanion.
+        ExecutionSubagent = nil, -- No such tool in CodeCompanion.
         FetchWebPage = first('fetch_webpage', 'tavily_mcp__tavily_extract'),
         GetErrors = first 'get_diagnostics',
         ToolSearch = nil, -- No such tool in CodeCompanion.
