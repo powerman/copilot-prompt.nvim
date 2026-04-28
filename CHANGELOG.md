@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-04-28
+
+### 🔔 Changed
+
+- Sync with v0.43.2026040705 by @powerman in [b4dd0ed]
+
+### 📚 Documentation
+
+- Add git__git_diff_unstaged into example by @powerman in [e7dba74]
+- Add link to used git MCP server by @powerman in [90384b8]
+- Mention new options in Features by @powerman in [141f729]
+- Update by @powerman in [ac6faeb]
+- Cleanup by @powerman in [91d0378]
+
+[0.3.0]: https://github.com/powerman/copilot-prompt.nvim/compare/v0.2.0..v0.3.0
+[e7dba74]: https://github.com/powerman/copilot-prompt.nvim/commit/e7dba746ddff1a1481602f2294a131faf7077f5c
+[90384b8]: https://github.com/powerman/copilot-prompt.nvim/commit/90384b8b6e8b7dcf7aed6115c565e850ffa83605
+[141f729]: https://github.com/powerman/copilot-prompt.nvim/commit/141f7299cae3bf45b383b9afd7b96f79c07b3cc5
+[ac6faeb]: https://github.com/powerman/copilot-prompt.nvim/commit/ac6faeb82b7cfdd7b74ed5c23ae998db9f1ad9cd
+[b4dd0ed]: https://github.com/powerman/copilot-prompt.nvim/commit/b4dd0ed5185ef25d396615cc3b5569884e2ffb99
+[91d0378]: https://github.com/powerman/copilot-prompt.nvim/commit/91d03788bfbe050d9984ddf1641c6a7041d786b4
+
 ## [0.2.0] - 2026-03-06
 
 ### 🚀 Added
