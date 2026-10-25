@@ -14,7 +14,7 @@ VS Code-specific features that are not valid for Neovim,
 and VS Code Copilot tool specifics that are not general enough
 to support tools used by any Neovim AI plugin.
 
-- Minimum Neovim version: 0.10.
+- Minimum Neovim version: 0.11.
 - Lua dialect: Lua 5.1. Use `vim.*` APIs, not `io.*` or `os.*`.
 
 ### Structure
