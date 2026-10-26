@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.1] - 2026-10-26
+
+### 📦️ Dependencies
+
+- **(deps)** Upgrade neovim by @powerman in [7e15a98]
+- **(deps)** Upgrade test dependencies by @powerman in [042dc67]
+
+[0.3.1]: https://github.com/powerman/copilot-prompt.nvim/compare/v0.3.0..v0.3.1
+[7e15a98]: https://github.com/powerman/copilot-prompt.nvim/commit/7e15a984a4836dadf8fd616266aa4813b24967e0
+[042dc67]: https://github.com/powerman/copilot-prompt.nvim/commit/042dc6798e2b9d389a5b1b03f775b596ccde2e99
+
 ## [0.3.0] - 2026-04-28
 
 ### 🔔 Changed
@@ -13,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 📚 Documentation
 
-- Add git__git_diff_unstaged into example by @powerman in [e7dba74]
+- Add `git__git_diff_unstaged` into example by @powerman in [e7dba74]
 - Add link to used git MCP server by @powerman in [90384b8]
 - Mention new options in Features by @powerman in [141f729]
 - Update by @powerman in [ac6faeb]
